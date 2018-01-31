@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<header>{% block header %}{% endblock %}</header>
+<nav>{% block nav %}{% endblock %}</nav>
+<section>{% block section %}{% endblock %}</section>
+<aside>{% block aside %}{% endblock %}</aside>
+<footer>{% block footer %}{% endblock %}</footer>
+
+</body>
+</html>
