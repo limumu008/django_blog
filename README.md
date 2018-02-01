@@ -6,3 +6,4 @@
 2. 博客
    1. startapp blog
    2. model:article
+   3. admin:添加 article
