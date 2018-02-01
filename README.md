@@ -5,3 +5,4 @@
    4. 创建网站布局
 2. 博客
    1. startapp blog
+   2. model:article
