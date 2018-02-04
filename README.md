@@ -8,3 +8,5 @@
    2. model:article
    3. admin:添加 article
    4. views:添加索引视图
+   5. map url
+   6. 构建模板及 css
