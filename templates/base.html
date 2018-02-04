@@ -4,18 +4,33 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
-    <link href="{% static 'css/base.css' %}">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-theme.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
-<header>{% block header %}{% endblock %}</header>
-<nav>{% block nav %}{% endblock %}</nav>
+<header>
+    {% block header %}
+        <p>header</p>
+    {% endblock %}
+</header>
+
+<nav>
+    {% block nav %}{% endblock %}
+</nav>
+
 <section>{% block section %}{% endblock %}</section>
-<aside>{% block aside %}{% endblock %}</aside>
-<footer>{% block footer %}{% endblock %}</footer>
+
+
+<footer>
+    {% block footer %}{% endblock %}
+</footer>
 
 </body>
 </html>

@@ -1,1 +1,20 @@
 {% extends 'blog/base.html' %}
+{% load static %}
+{% block title %}python{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'blog/css/index.css' %}">
+{% endblock extra_css %}
+
+{% block main %}
+    {% for article in articles %}
+        <article>
+            <a href="{{ article.get_absolute_url }}">
+                <h2>{{ article.title }}</h2>
+            </a>
+            <p>{{ article.publish|date:"y/m/d" }} {{ article.author }}</p>
+            <p class="article">{{ article.content|truncatechars:120 }}</p>
+        </article>
+    {% endfor %}
+{% endblock main %}
+

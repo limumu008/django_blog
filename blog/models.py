@@ -13,7 +13,6 @@ class Article(models.Model):
         ('draft', 'Draft'),
         ('published', 'Published'))
     title = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=50)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -27,4 +26,6 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
-    # todo write get_absolute_url for model:article
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('blog:articles', kwargs={'pk': self.pk})

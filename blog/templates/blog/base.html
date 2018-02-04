@@ -1,5 +1,27 @@
 {% extends 'base.html' %}
+
 {% load static %}
+
 {% block extra_css %}
     <link href="{% static 'blog/css/blog.css' %} " rel="stylesheet">
-{% endblock %}
+{% endblock extra_css %}
+
+{% block nav %}
+
+{% endblock nav %}
+
+{% block section %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                {% block main %}{% endblock main %}
+            </div>
+            <div class="col-md-1"></div>
+            <aside class="col-md-4">
+                {% block aside %}
+                    <h2>我的博客</h2>
+                {% endblock aside %}
+            </aside>
+        </div>
+    </div>
+{% endblock section %}
