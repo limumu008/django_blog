@@ -7,6 +7,7 @@ class IndexView(generic.ListView):
     queryset = Article.published.all()
     template_name = 'blog/index.html'
     context_object_name = 'articles'
+    paginate_by = 10
 
 
 class ArticleView(generic.DetailView):

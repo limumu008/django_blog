@@ -16,5 +16,7 @@
             <p class="article">{{ article.content|truncatechars:120 }}</p>
         </article>
     {% endfor %}
+    {% include 'paginator.html' with page=page_obj %}
 {% endblock main %}
+
 

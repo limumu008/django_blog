@@ -1,11 +1,12 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: medium;
-
+    padding-top: 60px;
 }
 
 header {
     padding: 10px 100px;
+    height: 60px;
     font-size: 14px;
     background: #12c064;
     color: #fff;
@@ -13,6 +14,7 @@ header {
     overflow: auto;
 }
 
-p {
-    line-height: 1.8;
+.pag {
+    margin: 40px 0;
+    font-weight: bold;
 }
