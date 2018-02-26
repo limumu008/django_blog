@@ -9,4 +9,5 @@
         <p>{{ article.publish|date:"Y M D" }} {{ article.author }}</p>
         <p>{{ article.content }}</p>
     </article>
+    <p><a href="{% url 'blog:share_article' id=article.id %}">分享文章</a></p>
 {% endblock %}

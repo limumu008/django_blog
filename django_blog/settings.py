@@ -117,5 +117,19 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
 # auth
 AUTH_USER_MODEL = 'account.User'
+
+# email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_SUBJECT_PREFIX = '[Django] '
+EMAIL_USE_LOCALTIME = False
+EMAIL_USE_TLS = False
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+
+DEFAULT_FROM_EMAIL = 'wangzhou8284@163.com'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_HOST_USER = 'wangzhou8284@163.com'
+EMAIL_HOST_PASSWORD = 'wyyxsq522421519'
