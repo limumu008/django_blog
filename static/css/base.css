@@ -2,16 +2,17 @@ body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: medium;
     padding-top: 60px;
+    min-height: 2000px;
 }
 
 header {
+    background-color: #12c064;
+    color: #337ab7;
+    height: 70px;
     padding: 10px 100px;
-    height: 60px;
-    font-size: 14px;
-    background: #12c064;
-    color: #fff;
-    border-bottom: 4px solid #1cdf78;
-    overflow: auto;
+    border-bottom: ridge 4px;
+    font-size: 1.2em;
+    font-weight: bolder;
 }
 
 .pag {

@@ -1,0 +1,11 @@
+{% extends 'account/base.html' %}
+
+{% block title %}我的信息{% endblock %}
+
+{% block main %}
+    <h1>我的信息</h1>
+    <p>暂时先这样</p>
+    <p><a href="{% url 'account:update_user' user.id %}">更新用户信息</a></p>
+    <p><a href="{% url 'account:password_change' %}">修改密码</a></p>
+    <p><a href="{% url 'logout' %}">注销登录</a></p>
+{% endblock %}

@@ -15,9 +15,25 @@
 
 <body>
 
-<header class="navbar-fixed-top">
+<header class="navbar-fixed-top ">
     {% block header %}
-        <p>header</p>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'blog:index' %}">首页</a></li>
+                {# todo timeline #}
+                <li><a href="#">档案</a></li>
+                {# todo tags #}
+                <li><a href="#">标签</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if request.user.is_authenticated %}
+                    <li><a href="{% url 'account:profile' %}">我的主页</a></li>
+                {% else %}
+                    <li><a href="{% url 'account:register' %}">注册</a></li>
+                    <li><a href="{% url 'login' %}">登录</a></li>
+                {% endif %}
+            </ul>
+        </div>
     {% endblock %}
 </header>
 

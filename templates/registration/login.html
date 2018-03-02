@@ -1,0 +1,42 @@
+{% extends "account/base.html" %}
+
+{% block title %}登录{% endblock title %}
+
+{% block main %}
+    <h1>登录</h1>
+    {% if form.errors %}
+        <p>用户名与密码不匹配，请重试</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>Your account doesn't have access to this page. To proceed,
+                please login with an account that has access.</p>
+        {% else %}
+            <p>请登录后阅读</p>
+        {% endif %}
+    {% endif %}
+    <p>请使用下面的表单进行登录：</p>
+    <div class="login-form">
+        <form method="post" action=".">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>用户名：</td>
+                    <td>{{ form.username }}</td>
+                </tr>
+                <tr>
+                    <td>密码：</td>
+                    <td>{{ form.password }}</td>
+                </tr>
+            </table>
+
+            <input type="submit" value="登录"/>
+            <input type="hidden" name="next" value="{{ next }}"/>
+        </form>
+    </div>
+
+    <p><a href="{% url 'password_reset' %}">忘记密码?</a></p>
+    <p><a href="{% url "account:register" %}">注册</a></p>
+
+{% endblock %}

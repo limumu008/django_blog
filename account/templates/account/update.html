@@ -1,0 +1,12 @@
+{% extends "account/base.html" %}
+
+{% block title %}更新用户信息{% endblock title %}
+
+{% block main %}
+    <h1>更新用户信息</h1>
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="更新">
+    </form>
+{% endblock main %}
