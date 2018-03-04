@@ -2,3 +2,14 @@ p.article {
     font-size: 0.8em;
     line-height: 1.8;
 }
+
+div.comment {
+    background-color: #a6e1ec;
+}
+
+p.comment-author {
+    font-size: 0.8em;
+    color: blue;
+    font-weight: bolder;
+}
+

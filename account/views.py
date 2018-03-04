@@ -33,7 +33,6 @@ def account_profile(request):
 
 
 class RegisterView(generic.CreateView):
-    # todo add email verification
     # todo add auto login
     model = User
     form_class = RegisterForm
