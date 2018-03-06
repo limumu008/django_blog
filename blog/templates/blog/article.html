@@ -4,10 +4,18 @@
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block main %}
-    <article>
+    <article class="article">
         {# 显示文章 #}
         <h1>{{ article.title }}</h1>
         <p>{{ article.publish|date:"Y M D" }} {{ article.author }}</p>
+        <p>
+            {% for tag in article.tags.all %}
+                <a href="{% url 'blog:tag_index' tag.slug %}">
+                    <span class="tags">{{ tag.name }}</span>
+                </a>
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
         <p>{{ article.content }}</p>
 
         <p><a href="{% url 'blog:share_article' id=article.id %}">分享文章</a></p>

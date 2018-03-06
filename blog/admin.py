@@ -8,7 +8,7 @@ class CommentInline(admin.TabularInline):
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    fields = ['title', 'author', 'publish', 'status', 'content']
+    fields = ['title', 'author', 'publish', 'status', 'content', 'tags']
     list_filter = ['author', 'publish', 'status']
     search_fields = ['title', 'content']
     date_hierarchy = 'publish'

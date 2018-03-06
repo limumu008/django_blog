@@ -1,0 +1,12 @@
+{% extends 'blog/base.html' %}
+
+{% block main %}
+    <h2>全部标签</h2>
+    {% for tag in tags %}
+        <p>
+            <a href="{% url 'blog:tag_index' tag.slug %}">
+                <span class="tags index-tags">{{ tag.name }}</span>
+            </a>
+        </p>
+    {% endfor %}
+{% endblock %}

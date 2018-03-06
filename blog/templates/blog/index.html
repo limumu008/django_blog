@@ -2,16 +2,25 @@
 {% load static %}
 {% block title %}python{% endblock title %}
 
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'blog/css/index.css' %}">
-{% endblock extra_css %}
+
 
 {% block main %}
+
+    {% if tag %}
+        <h2>标签：{{ tag.name }}</h2>
+    {% endif %}
+
     {% for article in articles %}
-        <article>
-            <a href="{{ article.get_absolute_url }}">
-                <h2>{{ article.title }}</h2>
-            </a>
+        <article class="index">
+            <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
+            <p>
+                {% for tag in article.tags.all %}
+                    <a href="{% url 'blog:tag_index' tag.slug %}">
+                        <span class="tags">{{ tag.name }}</span>
+                    </a>
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
             <p>{{ article.publish|date:"y/m/d" }} {{ article.author }}</p>
             <p class="article">{{ article.content|truncatechars:120 }}</p>
         </article>

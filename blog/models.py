@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from taggit.managers import TaggableManager
 
 
 class PublishedManager(models.Manager):
@@ -22,6 +23,7 @@ class Article(models.Model):
 
     objects = models.Manager()
     published = PublishedManager()
+    tags = TaggableManager(blank=True)
 
     def __str__(self):
         return self.title

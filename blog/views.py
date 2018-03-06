@@ -1,6 +1,7 @@
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, render
 from django.views import generic
+from taggit.models import Tag
 
 from .forms import ArticleCommentForm, EmailArticleForm
 from .models import Article
@@ -11,6 +12,23 @@ class IndexView(generic.ListView):
     template_name = 'blog/index.html'
     context_object_name = 'articles'
     paginate_by = 10
+
+    def get_queryset(self):
+        try:
+            tag_slug = self.kwargs['tag_slug']
+            tag = get_object_or_404(Tag, slug=tag_slug)
+            self.tag = tag
+            return Article.published.filter(tags__name__in=[tag])
+        except KeyError:
+            return Article.published.order_by('-publish')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            context['tag'] = self.tag
+            return context
+        except AttributeError:
+            return context
 
 
 def article_detail(request, pk):
@@ -51,3 +69,13 @@ def share_article(request, id):
         form = EmailArticleForm()
     context = {'article': article, 'cd': cd, 'form': form, 'is_sent': is_sent}
     return render(request, 'blog/share_article.html', context)
+
+
+def retrieve_tags(request):
+    articles = Article.published.all()
+    tags = []
+    for article in articles:
+        for tag in article.tags.all():
+            if tag not in tags:
+                tags.append(tag)
+    return render(request, 'blog/retrieve_tags.html', {'tags': tags})

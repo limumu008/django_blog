@@ -1,6 +1,9 @@
-p.article {
-    font-size: 0.8em;
+article.article {
     line-height: 1.8;
+}
+
+article.index {
+    border-bottom: outset;
 }
 
 div.comment {
@@ -12,4 +15,16 @@ p.comment-author {
     color: blue;
     font-weight: bolder;
 }
+
+.tags {
+    background-color: darkblue;
+    color: ghostwhite;
+    padding: 2px 4px;
+    font-size: 1em;
+}
+
+.index-tags {
+    font-size: 1.2em;
+}
+
 
