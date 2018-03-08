@@ -15,6 +15,23 @@
 
 <body>
 
+{% if messages %}
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="messages col-md-6">
+            {% for message in messages %}
+                <p  {% if message.tags %}
+                    class="{{ message.tags }}"
+                {% endif %}>
+                    {{ message }}
+                </p>
+            {% endfor %}
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+{% endif %}
+
+
 <header class="navbar-fixed-top ">
     {% block header %}
         <div id="navbar" class="navbar-collapse collapse">
@@ -25,6 +42,7 @@
                 <li><a href="{% url 'blog:tags' %}">标签</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'blog:new_article' %}">写文章</a></li>
                 {% if request.user.is_authenticated %}
                     <li><a href="{% url 'account:profile' %}">我的主页</a></li>
                 {% else %}

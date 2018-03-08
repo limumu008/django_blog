@@ -1,13 +1,19 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, render
 from django.views import generic
 from taggit.models import Tag
 
-from .forms import ArticleCommentForm, EmailArticleForm
+from .forms import (
+    ArticleCommentForm,
+    EmailArticleForm,
+    NewArticleForm)
 from .models import Article
 
 
 class IndexView(generic.ListView):
+    """文章展示页"""
     queryset = Article.published.all()
     template_name = 'blog/index.html'
     context_object_name = 'articles'
@@ -29,6 +35,18 @@ class IndexView(generic.ListView):
             return context
         except AttributeError:
             return context
+
+
+class NewArticle(LoginRequiredMixin, generic.CreateView):
+    model = Article
+    form_class = NewArticleForm
+    template_name = 'blog/new_article.html'
+
+    def form_valid(self, form):
+        article = form.save(commit=False)
+        article.author = self.request.user
+        article.save()
+        return super().form_valid(form)
 
 
 def article_detail(request, pk):
@@ -65,9 +83,13 @@ def share_article(request, id):
                       f"{cd['name']}的评论：{cd['comment']}"
             send_mail(subject, message, 'wangzhou8284@163.com', [cd['to']])
             is_sent = True
+            messages.success(request, '分享成功')
+
     else:
         form = EmailArticleForm()
-    context = {'article': article, 'cd': cd, 'form': form, 'is_sent': is_sent}
+    context = {'article': article,
+               'cd': cd, 'form': form,
+               'is_sent': is_sent, }
     return render(request, 'blog/share_article.html', context)
 
 
