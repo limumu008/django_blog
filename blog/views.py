@@ -13,7 +13,7 @@ from taggit.models import Tag
 from .forms import (
     ArticleCommentForm,
     EmailArticleForm,
-    NewArticleForm)
+    ArticleForm)
 from .models import Article
 
 
@@ -42,9 +42,23 @@ class IndexView(generic.ListView):
             return context
 
 
+class MyArticles(LoginRequiredMixin, IndexView):
+    template_name = 'blog/my_articles.html'
+    context_object_name = 'my_articles'
+
+    def get_queryset(self):
+        try:
+            tag_slug = self.kwargs['tag_slug']
+            tag = get_object_or_404(Tag, slug=tag_slug)
+            self.tag = tag
+            return Article.published.filter(tags__name__in=[tag]).filter(author=self.request.user)
+        except KeyError:
+            return Article.objects.filter(author=self.request.user)
+
+
 class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     model = Article
-    form_class = NewArticleForm
+    form_class = ArticleForm
     template_name = 'blog/new_article.html'
     success_message = '发表成功'
 
@@ -55,9 +69,21 @@ class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
         return super().form_valid(form)
 
 
+class UpdateArticle(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'blog/update_article.html'
+    success_message = '修改成功'
+
+
 def article_detail(request, pk):
     article = get_object_or_404(Article, id=pk)
     comments = article.comments.filter(is_show=True)
+    article_author = False
+    if request.user.is_authenticated:
+        user = request.user
+        if article.author == user:
+            article_author = True
     if request.method == 'POST':
         comment_form = ArticleCommentForm(request.POST)
         if comment_form.is_valid():
@@ -71,6 +97,7 @@ def article_detail(request, pk):
     context = {'article': article,
                'comments': comments,
                'comment_form': comment_form,
+               'author_author': article_author,
                }
     return render(request, 'blog/article.html', context)
 

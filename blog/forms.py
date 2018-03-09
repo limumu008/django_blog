@@ -19,7 +19,7 @@ class ArticleCommentForm(forms.ModelForm):
         }
 
 
-class NewArticleForm(forms.ModelForm):
+class ArticleForm(forms.ModelForm):
     error_messages = {
         'languages': _('请使用英文标签及逗号'),
     }

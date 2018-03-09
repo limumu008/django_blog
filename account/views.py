@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
@@ -6,7 +7,7 @@ from django.contrib.auth.views import PasswordChangeView, \
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
@@ -104,7 +105,8 @@ class ActivateView(TemplateView):
                     return HttpResponseRedirect(redirect_url)
 
         # Display the "Password reset unsuccessful" page.
-        return self.render_to_response(self.get_context_data())
+        messages.success(self.request, '激活成功')
+        return redirect('account:profile')
 
     def get_user(self, uidb64):
         try:

@@ -8,6 +8,11 @@
         {# 显示文章 #}
         <h1>{{ article.title }}</h1>
         <p>{{ article.publish|date:"Y M D" }} {{ article.author }}</p>
+        {% if author_author %}
+            <p>
+                <a href="{% url 'blog:update_article' article.id %}">修改文章</a>
+            </p>
+        {% endif %}
         <p>
             {% for tag in article.tags.all %}
                 <a href="{% url 'blog:tag_index' tag.slug %}">
@@ -18,6 +23,7 @@
         </p>
         <p>{{ article.content }}</p>
 
+        {# 分享文章 #}
         <p><a href="{% url 'blog:share_article' id=article.id %}">分享文章</a></p>
 
         {# 新评论 #}
