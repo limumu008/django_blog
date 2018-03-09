@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordChangeView, \
@@ -34,7 +34,6 @@ def account_profile(request):
 
 
 class RegisterView(generic.CreateView):
-    # todo add auto login
     model = User
     form_class = RegisterForm
     template_name = 'account/register.html'
@@ -114,6 +113,7 @@ class ActivateView(TemplateView):
             user = User.objects.get(pk=uid)
             user.is_active = True
             user.save()
+            login(self.request, user)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
