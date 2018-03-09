@@ -22,16 +22,12 @@
 
         {# 新评论 #}
 
-        {% if new_comment %}
-            <h2>评论已添加</h2>
-        {% else %}
-            <h2>创建新评论：</h2>
-            <form action="." method="post">
-                {{ comment_form.as_p }}
-                {% csrf_token %}
-                <input type="submit" value="评论">
-            </form>
-        {% endif %}
+        <h2>创建新评论：</h2>
+        <form action="." method="post">
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <input type="submit" value="评论">
+        </form>
         <br>
         {# 显示评论 #}
 

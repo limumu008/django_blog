@@ -19,3 +19,34 @@ header {
     margin: 40px 0;
     font-weight: bold;
 }
+
+.messages {
+    text-align: center;
+    padding: 0;
+    list-style-type: none;
+}
+
+.messages .success, .warning, .error, .info {
+    margin: 0;
+    padding: 14px 20px;
+    list-style: none;
+    color: #fff;
+}
+
+.messages .success {
+    background: #81ce81;
+}
+
+.messages .warning {
+    background: #de9404;
+}
+
+.messages .info {
+    background: #faffae;
+    color: #696b4e;
+}
+
+.messages .error {
+    background: #a30029;
+    color: #e9828e;
+}

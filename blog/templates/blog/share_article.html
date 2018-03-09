@@ -3,15 +3,10 @@
 {% block title %}分享文章{% endblock %}
 
 {% block main %}
-    {% if is_sent %}
-        <h1>邮件发送成功</h1>
-        <p>邮件 {{ article.title }} 成功发送至 {{ cd.to }}</p>
-    {% else %}
-        <h1>通过邮件分享文章</h1>
-        <form method="post" action=".">
-            {{ form.as_p }}
-            {% csrf_token %}
-            <input type="submit" value="发送邮件">
-        </form>
-    {% endif %}
+    <h1>通过邮件分享文章</h1>
+    <form method="post" action=".">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit" value="发送邮件">
+    </form>
 {% endblock %}

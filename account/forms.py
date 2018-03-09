@@ -138,6 +138,7 @@ class ResetPasswordForm(SetPasswordForm):
 class PasswordChangeForm0(PasswordChangeForm):
     error_messages = dict(SetPasswordForm.error_messages, **{
         'password_incorrect': _("旧密码输入错误，请重新输入。"),
+        'password_mismatch': _("两次新密码不匹配"),
     })
     old_password = forms.CharField(
             label=_("旧密码"),

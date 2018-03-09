@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordChangeView, \
     PasswordResetConfirmView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -136,26 +137,26 @@ class ActivateView(TemplateView):
         return context
 
 
-class UpdateUserView(generic.UpdateView):
+class UpdateUserView(SuccessMessageMixin, generic.UpdateView):
     model = User
     form_class = UpdateUserForm
     template_name = 'account/update.html'
-    success_url = reverse_lazy('account:update_done')
+    success_message = '更新成功'
+    success_url = reverse_lazy('account:profile')
 
 
-class PasswordChangeView0(PasswordChangeView):
+class PasswordChangeView0(SuccessMessageMixin, PasswordChangeView):
     template_name = 'registration/password_change_form.html'
-    success_url = reverse_lazy('password_change_done')
+    success_url = reverse_lazy('account:profile')
+    success_message = '修改密码成功'
     form_class = PasswordChangeForm0
 
 
-class ResetPasswordView(PasswordResetConfirmView):
+class ResetPasswordView(SuccessMessageMixin, PasswordResetConfirmView):
     form_class = ResetPasswordForm
+    success_message = '密码重置完成'
+    success_url = reverse_lazy('account:profile')
 
 
 def register_success(request):
     return render(request, 'account/register_success.html')
-
-
-def update_success(request):
-    return render(request, 'account/update_success.html')
