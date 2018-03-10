@@ -1,11 +1,11 @@
 {% extends 'blog/base.html' %}
-
+{% load blog_tags %}
 {% block title %}我的文章{% endblock %}
 
 {% block main %}
 
     {% if tag %}
-        <h2>标签：{{ tag.name }}</h2>
+        <h2>我的标签：{{ tag.name }}</h2>
     {% endif %}
 
     {% for article in my_articles %}
@@ -20,7 +20,7 @@
                 {% endfor %}
             </p>
             <p>{{ article.publish|date:"y/m/d" }} {{ article.author }}</p>
-            <p class="article">{{ article.content|truncatechars:120 }}</p>
+            <p class="article">{{ article.content|markdown_format|truncatechars:120 }}</p>
         </article>
     {% endfor %}
     {% include 'paginator.html' with page=page_obj %}

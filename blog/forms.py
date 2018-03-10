@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from markdownx.fields import MarkdownxFormField
 
 from blog.models import Article, Comment
 
@@ -23,13 +24,13 @@ class ArticleForm(forms.ModelForm):
     error_messages = {
         'languages': _('请使用英文标签及逗号'),
     }
+    content = MarkdownxFormField(label='文章内容')
 
     class Meta:
         model = Article
         fields = ['title', 'content', 'status', 'tags']
         labels = {
             'title': '文章标题',
-            'content': '文章内容',
             'status': '文章状态',
             'tags': '文章标签',
         }

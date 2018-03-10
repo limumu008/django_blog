@@ -1,5 +1,5 @@
 {% extends 'blog/base.html' %}
-{% load static %}
+{% load static blog_tags %}
 {% block title %}python{% endblock title %}
 
 
@@ -22,7 +22,7 @@
                 {% endfor %}
             </p>
             <p>{{ article.publish|date:"y/m/d" }} {{ article.author }}</p>
-            <p class="article">{{ article.content|truncatechars:120 }}</p>
+            <p class="article">{{ article.content|markdown_format|truncatechars:120 }}</p>
         </article>
     {% endfor %}
     {% include 'paginator.html' with page=page_obj %}

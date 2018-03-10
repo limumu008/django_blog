@@ -1,0 +1,30 @@
+article.article {
+    line-height: 1.8;
+}
+
+article.index {
+    border-bottom: outset;
+}
+
+div.comment {
+    background-color: #a6e1ec;
+}
+
+p.comment-author {
+    font-size: 0.8em;
+    color: blue;
+    font-weight: bolder;
+}
+
+.tags {
+    background-color: darkblue;
+    color: ghostwhite;
+    padding: 2px 4px;
+    font-size: 1em;
+}
+
+.index-tags {
+    font-size: 1.2em;
+}
+
+

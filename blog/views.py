@@ -10,10 +10,7 @@ from django.shortcuts import (
 from django.views import generic
 from taggit.models import Tag
 
-from .forms import (
-    ArticleCommentForm,
-    EmailArticleForm,
-    ArticleForm)
+from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm)
 from .models import Article
 
 
@@ -29,7 +26,7 @@ class IndexView(generic.ListView):
             tag_slug = self.kwargs['tag_slug']
             tag = get_object_or_404(Tag, slug=tag_slug)
             self.tag = tag
-            return Article.published.filter(tags__name__in=[tag])
+            return Article.published.filter(tags__name__in=[tag]).order_by('-publish')
         except KeyError:
             return Article.published.order_by('-publish')
 
@@ -51,7 +48,8 @@ class MyArticles(LoginRequiredMixin, IndexView):
             tag_slug = self.kwargs['tag_slug']
             tag = get_object_or_404(Tag, slug=tag_slug)
             self.tag = tag
-            return Article.published.filter(tags__name__in=[tag]).filter(author=self.request.user)
+            return Article.published.filter(tags__name__in=[tag]). \
+                filter(author=self.request.user).order_by('-publish')
         except KeyError:
             return Article.objects.filter(author=self.request.user)
 
