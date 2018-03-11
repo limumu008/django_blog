@@ -8,12 +8,12 @@
         <h2>我的标签：{{ tag.name }}</h2>
     {% endif %}
 
-    {% for article in my_articles %}
+    {% for article in my_drafts %}
         <article class="index">
             <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
             <p>
                 {% for tag in article.tags.all %}
-                    <a href="{% url 'blog:my_articles_tags' tag.slug %}">
+                    <a href="{% url 'blog:my_drafts_tags' tag.slug %}">
                         <span class="tags">{{ tag.name }}</span>
                     </a>
                     {% if not forloop.last %}, {% endif %}
@@ -23,7 +23,7 @@
             <p class="article">{{ article.content|markdown_format|truncatechars:120 }}</p>
         </article>
     {% empty %}
-        <p>暂无文章</p>
+        <p>暂无草稿</p>
     {% endfor %}
     {% include 'paginator.html' with page=page_obj %}
 {% endblock main %}

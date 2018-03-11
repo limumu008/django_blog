@@ -54,6 +54,23 @@ class MyArticles(LoginRequiredMixin, IndexView):
             return Article.objects.filter(author=self.request.user)
 
 
+class MyDrafts(LoginRequiredMixin, IndexView):
+    template_name = 'blog/my_drafts.html'
+    context_object_name = 'my_drafts'
+
+    def get_queryset(self):
+        try:
+            tag_slug = self.kwargs['tag_slug']
+            tag = get_object_or_404(Tag, slug=tag_slug)
+            self.tag = tag
+            return Article.objects.filter(tags__name__in=[tag]). \
+                filter(status='draft'). \
+                filter(author=self.request.user).order_by('-publish')
+        except KeyError:
+            return Article.objects.filter(author=self.request.user). \
+                filter(status='draft')
+
+
 def archives(request):
     """文章归档"""
     archives = []
