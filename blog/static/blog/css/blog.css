@@ -3,11 +3,14 @@ article.article {
 }
 
 article.index {
+    padding-left: 20px;
     border-bottom: outset;
+    background-color: white;
 }
 
 div.comment {
     background-color: #a6e1ec;
+    padding-left: 20px;
 }
 
 p.comment-author {
@@ -27,4 +30,15 @@ p.comment-author {
     font-size: 1.2em;
 }
 
+div.archive-date {
+    font-size: 1.5em;
+    font-weight: bolder;
+}
+
+article.archive-article {
+    border: outset;
+    padding-left: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+}
 

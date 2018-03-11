@@ -54,6 +54,22 @@ class MyArticles(LoginRequiredMixin, IndexView):
             return Article.objects.filter(author=self.request.user)
 
 
+def archives(request):
+    """文章归档"""
+    archives = []
+    dates = Article.published.dates('publish', 'month', order='DESC')
+    for date in dates:
+        year = date.year
+        month = date.month
+        articles = Article.published.filter(
+                publish__year=year,
+                publish__month=month).order_by('-publish')
+        archives.append(articles)
+    date_archives = zip(dates, archives)
+    context = {'date_archives': date_archives}
+    return render(request, 'blog/article_archives.html', context)
+
+
 class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     model = Article
     form_class = ArticleForm

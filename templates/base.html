@@ -37,8 +37,7 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="{% url 'blog:index' %}">首页</a></li>
-                {# todo timeline #}
-                <li><a href="#">档案</a></li>
+                <li><a href="{% url 'blog:archives' %}">档案</a></li>
                 <li><a href="{% url 'blog:tags' %}">标签</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

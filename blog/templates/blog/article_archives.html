@@ -1,0 +1,25 @@
+{% extends 'blog/base.html' %}
+{% block title %}文章归档{% endblock %}
+
+{% block main %}
+    {% for date,articles in date_archives %}
+        <div class="archive-date">
+            {{ date.year }}年-{{ date.month }}月
+        </div>
+        {% for article in articles %}
+            <article class="archive-article">
+                <h3><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
+                <p>{{ article.publish|date:"m/d" }} {{ article.author }}</p>
+
+                <p>
+                    {% for tag in article.tags.all %}
+                        <a href="{% url 'blog:tag_index' tag.slug %}">
+                            <span class="tags">{{ tag.name }}</span>
+                        </a>
+                        {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            </article>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}
