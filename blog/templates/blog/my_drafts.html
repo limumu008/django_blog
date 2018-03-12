@@ -19,7 +19,10 @@
                     {% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </p>
-            <p>{{ article.publish|date:"y/m/d" }} {{ article.author }}</p>
+            <p class="extra-info">{{ article.publish|date:"y/m/d" }} {{ article.author }}
+                评论数 {% comments_counts article %}
+                阅读数 {{ article.read_times }}
+            </p>
             <p class="article">{{ article.content|markdown_format|truncatechars:120 }}</p>
         </article>
     {% empty %}

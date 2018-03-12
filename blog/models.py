@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import F
 from django.utils import timezone
 from taggit.managers import TaggableManager
 
@@ -20,6 +21,7 @@ class Article(models.Model):
     updated = models.DateTimeField(auto_now=True)
     publish = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=20, default='draft', choices=STATUS_CHOICES)
+    read_times = models.PositiveIntegerField(default=0)
 
     objects = models.Manager()
     published = PublishedManager()
@@ -31,6 +33,13 @@ class Article(models.Model):
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('blog:articles', kwargs={'pk': self.pk})
+
+    def add_read_times(self):
+        # self.read_times += 1
+        self.read_times = F('read_times') + 1
+        self.save(update_fields=['read_times'])
+        # 使用 F 表达式需重新从数据库加载值
+        self.refresh_from_db()
 
 
 class Comment(models.Model):

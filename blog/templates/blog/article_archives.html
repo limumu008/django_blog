@@ -9,7 +9,7 @@
         {% for article in articles %}
             <article class="archive-article">
                 <h3><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
-                <p>{{ article.publish|date:"m/d" }} {{ article.author }}</p>
+                <p class="extra-info">{{ article.publish|date:"m/d" }} {{ article.author }}</p>
 
                 <p>
                     {% for tag in article.tags.all %}

@@ -7,6 +7,10 @@ article.article {
     line-height: 1.8;
 }
 
+p.extra-info {
+    font-size: 0.8em;
+}
+
 article.index {
     padding-left: 20px;
     border-bottom: outset;

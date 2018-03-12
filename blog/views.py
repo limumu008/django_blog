@@ -109,6 +109,7 @@ class UpdateArticle(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView)
 
 def article_detail(request, pk):
     article = get_object_or_404(Article, id=pk)
+    article.add_read_times()
     comments = article.comments.filter(is_show=True)
     article_author = False
     if request.user.is_authenticated:
