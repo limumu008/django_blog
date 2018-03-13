@@ -18,7 +18,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from blog.views import IndexView
+
 urlpatterns = [
+                  path('', IndexView.as_view(), ),
                   path('account/', include('account.urls')),
                   path('account/', include('django.contrib.auth.urls')),
                   path('blog/', include('blog.urls')),
