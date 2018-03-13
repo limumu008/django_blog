@@ -21,12 +21,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'aqs&ttg_y(09hy3=kixehp^d6%-5n$q*mp4jt5#35s4=wyf9c%'
+with open('django_blog/key.txt') as f:
+    SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.qinglanjun.com']
+ALLOWED_HOSTS = ['.qinglanjun.com']
 
 # Application definition
 
@@ -81,6 +82,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'CONN_MAX_AGE': 60,
     }
 }
 
@@ -143,3 +145,11 @@ DEFAULT_FROM_EMAIL = 'wangzhou8284@163.com'
 EMAIL_HOST = 'smtp.163.com'
 EMAIL_HOST_USER = 'wangzhou8284@163.com'
 EMAIL_HOST_PASSWORD = 'wyyxsq522421519'
+
+# safe
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_SSL_REDIRECT = True
