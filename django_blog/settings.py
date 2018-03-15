@@ -27,7 +27,7 @@ with open('django_blog/key.txt') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['.qinglanjun.com']
+ALLOWED_HOSTS = ['localhost', '.qinglanjun.com']
 
 # Application definition
 
@@ -147,9 +147,9 @@ EMAIL_HOST_USER = 'wangzhou8284@163.com'
 EMAIL_HOST_PASSWORD = 'wyyxsq522421519'
 
 # safe
-CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True
