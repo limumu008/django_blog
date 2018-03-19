@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'taggit',
     'markdownx',
+    'gunicorn',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +62,7 @@ DATABASES = {
         'host': 'localhost',
         'TIME_ZONE': 'Asia/Shanghai',
         'OPTIONS': {
-            'read_default_file': 'W:\mysql\my.ini',
+            'read_default_file': '/etc/mysql/my.cnf',
             'isolation_level': 'read committed',
             'init_command': 'SET default_storage_engine=INNODB',
         }
@@ -157,10 +158,10 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': 'log/template.log',
         },
-        'debug': {
+        'debuglog': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'log/debug.log',
+            'filename': 'log/debuglog.log',
         },
     },
     'loggers': {
@@ -184,8 +185,8 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'debug': {
-            'handlers': ['debug'],
+        'debuglog': {
+            'handlers': ['debuglog'],
             'level': 'DEBUG',
             'propagate': True,
         },

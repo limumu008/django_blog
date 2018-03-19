@@ -44,7 +44,6 @@ class RegisterForm(UserCreationForm):
         labels = {
             'username': '用户名'
         }
-        help_texts = {'username': ''}
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -139,6 +138,7 @@ class PasswordChangeForm0(PasswordChangeForm):
     error_messages = dict(SetPasswordForm.error_messages, **{
         'password_incorrect': _("旧密码输入错误，请重新输入。"),
         'password_mismatch': _("两次新密码不匹配"),
+        'password_same': _("新密码与旧密码相同"),
     })
     old_password = forms.CharField(
             label=_("旧密码"),
@@ -156,3 +156,14 @@ class PasswordChangeForm0(PasswordChangeForm):
             strip=False,
             widget=forms.PasswordInput,
     )
+
+    def clean_new_password1(self):
+        """鉴别新密码是否与旧密码相同"""
+        old_password = self.cleaned_data.get('old_password')
+        password1 = self.cleaned_data.get('new_password1')
+        if password1 == old_password:
+            raise forms.ValidationError(
+                    self.error_messages['password_same'],
+                    code='password_same',
+            )
+        return password1
