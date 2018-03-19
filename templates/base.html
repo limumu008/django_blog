@@ -43,7 +43,9 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url 'blog:new_article' %}">写文章</a></li>
                 {% if request.user.is_authenticated %}
-                    <li><a href="{% url 'account:profile' %}">我的主页</a></li>
+                    <li id="hello"><a href="{% url 'account:profile' %}">
+                        你好，{{ request.user.username }}
+                    </a></li>
                 {% else %}
                     <li><a href="{% url 'account:register' %}">注册</a></li>
                     <li><a href="{% url 'login' %}">登录</a></li>

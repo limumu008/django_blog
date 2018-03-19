@@ -125,7 +125,7 @@ class ResetPasswordForm(SetPasswordForm):
             label=_("新密码"),
             widget=forms.PasswordInput,
             strip=False,
-            help_text='至少8位，与旧密码不同，不能全是数字',
+            help_text='至少8位，不能全是数字',
     )
     new_password2 = forms.CharField(
             label=_("新密码确认"),

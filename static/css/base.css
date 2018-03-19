@@ -16,6 +16,10 @@ header {
     font-weight: bolder;
 }
 
+#hello {
+    font-size: 0.8em;
+}
+
 .pag {
     margin: 40px 0;
     font-weight: bold;
