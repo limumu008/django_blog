@@ -132,3 +132,62 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 # SECURE_SSL_REDIRECT = True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/django.log',
+        },
+        'request': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/request.log',
+        },
+        'server': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/server.log',
+        },
+        'template': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/template.log',
+        },
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['request'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['server'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.template': {
+            'handlers': ['template'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'debug': {
+            'handlers': ['debug'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

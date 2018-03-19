@@ -78,9 +78,13 @@ def archives(request):
     for date in dates:
         year = date.year
         month = date.month
+
+        if month < 10:
+            month_str = str(year) + '-0' + str(month)
+        else:
+            month_str = str(year) + '-' + str(month)
         articles = Article.published.filter(
-                publish__year=year,
-                publish__month=month).order_by('-publish')
+                publish__startswith=month_str).order_by('-publish')
         archives.append(articles)
     date_archives = zip(dates, archives)
     context = {'date_archives': date_archives}
