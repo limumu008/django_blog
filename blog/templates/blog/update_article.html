@@ -2,11 +2,18 @@
 
 {% block title %}修改文章{% endblock %}
 
-{% block main %}
-    <h2>修改文章</h2>
-    <form action="." method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="修改">
-    </form>
+{% block section %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>修改文章</h2>
+                <form action="." method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="修改">
+                </form>
+                {{ form.media }}
+            </div>
+        </div>
+    </div>
 {% endblock %}

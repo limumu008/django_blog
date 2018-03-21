@@ -2,12 +2,18 @@
 
 {% block title %}写文章{% endblock %}
 
-{% block main %}
-    <h2>写一篇文章</h2>
-    <form action="." method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="发布新文章">
-    </form>
-    {{ form.media }}
+{% block section %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>写一篇文章</h2>
+                <form action="." method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="发布新文章">
+                </form>
+                {{ form.media }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
