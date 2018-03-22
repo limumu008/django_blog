@@ -19,6 +19,11 @@ class ArticleCommentForm(forms.ModelForm):
             'content': ''
         }
 
+    def __init__(self, *args, **kwargs):
+        """修改 widget 尺寸"""
+        super().__init__(*args, **kwargs)
+        self.fields['content'].widget.attrs.update({'cols':80, 'rows': 2})
+
 
 class ArticleForm(forms.ModelForm):
     error_messages = {
@@ -37,6 +42,11 @@ class ArticleForm(forms.ModelForm):
         help_texts = {
             'tags': '使用英文标签，使用逗号分隔'
         }
+
+    def __init__(self, *args, **kwargs):
+        """修改 widget 尺寸"""
+        super().__init__(*args, **kwargs)
+        self.fields['content'].widget.attrs.update({'cols': 64, 'rows': 15})
 
     def clean_tags(self):
         """限制仅使用英文标签"""
