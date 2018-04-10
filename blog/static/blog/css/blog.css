@@ -12,6 +12,8 @@ p.extra-info {
 }
 
 article.index {
+    margin: 20px 0;
+    padding-top: 2px;
     padding-left: 20px;
     border-bottom: outset;
     background-color: white;
