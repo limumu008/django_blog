@@ -11,8 +11,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-
 from django.utils.translation import gettext_lazy as _
+
+from account.models import Profile
 
 
 class RegisterForm(UserCreationForm):
@@ -107,6 +108,8 @@ class RegisterForm(UserCreationForm):
 
 
 class UpdateUserForm(forms.ModelForm):
+    """更新用户核心信息"""
+
     class Meta:
         model = get_user_model()
         fields = ('username', 'email')
@@ -115,6 +118,14 @@ class UpdateUserForm(forms.ModelForm):
             'username': '用户名',
             'email': '邮箱'
         }
+
+
+class UpdateProfileForm(forms.ModelForm):
+    """更新用户其他信息"""
+
+    class Meta:
+        model = Profile
+        fields = ('birth', 'photo')
 
 
 class ResetPasswordForm(SetPasswordForm):

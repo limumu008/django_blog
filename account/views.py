@@ -17,11 +17,12 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import TemplateView
 
-from account.forms import (
-    PasswordChangeForm0,
-    RegisterForm,
-    ResetPasswordForm,
-    UpdateUserForm)
+from account.forms import (PasswordChangeForm0,
+                           RegisterForm,
+                           ResetPasswordForm,
+                           UpdateProfileForm,
+                           UpdateUserForm)
+from account.models import Profile
 
 User = get_user_model()
 INTERNAL_RESET_URL_TOKEN = 'activate_account'
@@ -58,6 +59,7 @@ class RegisterView(generic.CreateView):
         user = form.save(commit=False)
         user.is_active = False
         user.save()
+        profile = Profile.objects.create(user=user)
         opts = {
             'user': user,
             'use_https': self.request.is_secure(),
@@ -139,12 +141,26 @@ class ActivateView(TemplateView):
         return context
 
 
-class UpdateUserView(SuccessMessageMixin, generic.UpdateView):
-    model = User
-    form_class = UpdateUserForm
-    template_name = 'account/update.html'
-    success_message = '更新成功'
-    success_url = reverse_lazy('account:profile')
+@login_required
+def update_user(request, pk):
+    """更新用户信息"""
+    user = User.objects.get(pk=pk)
+    if request.method == "POST":
+        user_form = UpdateUserForm(instance=user, data=request.POST)
+        profile_form = UpdateProfileForm(instance=user.profile,
+                                         data=request.POST,
+                                         files=request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "更新成功")
+
+    else:
+        user_form = UpdateUserForm(instance=user)
+        profile_form = UpdateProfileForm(instance=user.profile)
+    return render(request, 'account/update.html',
+                  {"user_form": user_form,
+                   "profile_form": profile_form})
 
 
 class PasswordChangeView0(SuccessMessageMixin, PasswordChangeView):
