@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'taggit',
     'markdownx',
     'gunicorn',
+    'avatar',
 ]
 
 MIDDLEWARE = [
