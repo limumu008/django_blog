@@ -1,3 +1,8 @@
+from avatar.forms import PrimaryAvatarForm, UploadAvatarForm
+from avatar.models import Avatar
+from avatar.signals import avatar_updated
+from avatar.utils import invalidate_cache
+from avatar.views import _get_avatars, _get_next
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
@@ -12,6 +17,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext as temp
 from django.views import generic
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
@@ -178,3 +184,43 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetConfirmView):
 
 def register_success(request):
     return render(request, 'account/register_success.html')
+
+
+@login_required
+def change(request, extra_context=None, next_override=None,
+           upload_form=UploadAvatarForm, primary_form=PrimaryAvatarForm,
+           *args, **kwargs):
+    if extra_context is None:
+        extra_context = {}
+    avatar, avatars = _get_avatars(request.user)
+    if avatar:
+        kwargs = {'initial': {'choice': avatar.id}}
+    else:
+        kwargs = {}
+    upload_avatar_form = upload_form(user=request.user, **kwargs)
+    primary_avatar_form = primary_form(request.POST or None,
+                                       user=request.user,
+                                       avatars=avatars, **kwargs)
+    if request.method == "POST":
+        updated = False
+        if 'choice' in request.POST and primary_avatar_form.is_valid():
+            avatar = Avatar.objects.get(
+                    id=primary_avatar_form.cleaned_data['choice'])
+            avatar.primary = True
+            avatar.save()
+            updated = True
+            invalidate_cache(request.user)
+            messages.success(request, temp("成功更新头像"))
+        if updated:
+            avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
+        return redirect(next_override or _get_next(request))
+
+    context = {
+        'avatar': avatar,
+        'avatars': avatars,
+        'upload_avatar_form': upload_avatar_form,
+        'primary_avatar_form': primary_avatar_form,
+        'next': next_override or _get_next(request)
+    }
+    context.update(extra_context)
+    return render(request, 'account/avatar/change.html', context)

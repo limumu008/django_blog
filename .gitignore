@@ -105,3 +105,6 @@ ENV/
 
 # database
 staticfiles/
+
+# else
+media/
