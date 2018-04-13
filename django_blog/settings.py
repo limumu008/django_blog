@@ -9,7 +9,7 @@ with open('django_blog/key.txt') as f:
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '.qinglanjun.com']
+ALLOWED_HOSTS = ['localhost', 'qinglanjun.com', '.qinglanjun.com']
 
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
@@ -106,7 +106,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # auth
 AUTH_USER_MODEL = 'account.User'
