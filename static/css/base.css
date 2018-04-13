@@ -55,3 +55,8 @@ header {
     background: #a30029;
     color: #e9828e;
 }
+
+/* 圆形头像 */
+.circle-avatar {
+    border-radius: 50%;
+}

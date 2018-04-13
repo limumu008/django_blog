@@ -1,4 +1,4 @@
-{% load static %}
+{% load static avatar_tags %}
 <!DOCTYPE html>
 <html lang="zh-en">
 
@@ -44,6 +44,7 @@
                 <li><a href="{% url 'blog:new_article' %}">写文章</a></li>
                 {% if request.user.is_authenticated %}
                     <li id="hello"><a href="{% url 'account:profile' %}">
+                        {% avatar user 25 class="circle-avatar" %}
                         你好，{{ request.user.username }}
                     </a></li>
                 {% else %}

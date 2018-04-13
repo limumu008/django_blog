@@ -1,0 +1,28 @@
+{% extends "account/base.html" %}
+{% load  avatar_tags %}
+
+{% block main %}
+    <div class="col-md-4"></div>
+    <div class="col-md-5">
+        <p>你现在的头像:</p>
+        {% avatar user 250 class="circle-avatar" %}
+    </div>
+    <div class="col-md-3">
+        {% if not avatars %}
+            <p>还没有上传头像，请上传：</p>
+        {% else %}
+            <form method="POST" action="{% url 'account:change_avatar' %}">
+                <ul>
+                    {{ primary_avatar_form.as_ul }}
+                </ul>
+                <p>{% csrf_token %}<input type="submit" value="选择新头像"/></p>
+            </form>
+        {% endif %}
+        <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+            {{ upload_avatar_form.as_p }}
+            <p>{% csrf_token %}<input type="submit" value="上传新头像"></p>
+        </form>
+    </div>
+
+
+{% endblock %}

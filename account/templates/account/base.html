@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'account/css/account.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block section %}
     <div class="container">
         <div class="row">
-            <div class="col-md-8">
-                {% block main %}{% endblock main %}
-            </div>
+            {% block main %}{% endblock main %}
         </div>
+    </div>
 {% endblock %}

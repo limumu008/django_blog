@@ -1,5 +1,5 @@
 {% extends 'blog/base.html' %}
-{% load static blog_tags %}
+{% load static blog_tags avatar_tags %}
 
 {% block title %}{{ article.title }}{% endblock %}
 
@@ -7,7 +7,9 @@
     <article class="article">
         {# 显示文章 #}
         <h1>{{ article.title }}</h1>
-        <p class="extra-info">{{ article.publish|date:"y/m/d" }} {{ article.author }}
+        <p class="extra-info">
+            {% avatar user 25 class="circle-avatar" %}
+            {{ article.publish|date:"y/m/d" }} {{ article.author }}
             字数 {{ article.content|length }}
             评论数 {% comments_counts article %}
             阅读数 {{ article.read_times }}
@@ -45,6 +47,7 @@
         {% for comment in comments %}
             <div class="comment">
                 <p class="comment-author">
+                    {% avatar user 25 class="circle-avatar" %}
                     {{ comment.author }} {{ comment.created |date:'y/m/d h:i' }}
                 </p>
                 <p>{{ comment }}</p>

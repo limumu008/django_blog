@@ -28,6 +28,7 @@ p.comment-author {
     font-size: 0.8em;
     color: blue;
     font-weight: bolder;
+    padding-top: 5px;
 }
 
 .tags {
