@@ -138,6 +138,11 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 # SECURE_SSL_REDIRECT = True
 
+# markdown
+MARKDOWNX_MARKDOWN_EXTENSIONS = ['markdown.extensions.extra',
+                                 'markdown.extensions.codehilite',
+                                 'markdown.extensions.toc']
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
