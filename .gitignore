@@ -110,3 +110,4 @@ staticfiles/
 media/
 account/migrations/
 blog/migrations/
+Pipfile
