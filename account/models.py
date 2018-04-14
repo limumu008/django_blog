@@ -24,6 +24,7 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='users/%Y/%m/%d', blank=True)
+    is_author = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} profile"
