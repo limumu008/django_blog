@@ -108,3 +108,5 @@ staticfiles/
 
 # else
 media/
+account/migrations/
+blog/migrations/
