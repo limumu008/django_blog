@@ -21,7 +21,7 @@ def article_counts(user):
 
 @register.simple_tag(name='draft_counts')
 def draft_counts(user):
-    """获取用户撰写的文章总数"""
+    """获取用户撰写的草稿总数"""
     return Article.objects.filter(author=user).filter(status='draft').count()
 
 

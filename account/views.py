@@ -11,8 +11,8 @@ from django.contrib.auth.views import PasswordChangeView, \
     PasswordResetConfirmView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
@@ -28,7 +28,8 @@ from account.forms import (PasswordChangeForm0,
                            ResetPasswordForm,
                            UpdateProfileForm,
                            UpdateUserForm)
-from account.models import Profile
+from account.models import Contact, Profile
+from blog.models import Article
 
 User = get_user_model()
 INTERNAL_RESET_URL_TOKEN = 'activate_account'
@@ -224,3 +225,71 @@ def change(request, extra_context=None, next_override=None,
     }
     context.update(extra_context)
     return render(request, 'account/avatar/change.html', context)
+
+
+class UserListView(generic.ListView):
+    """展示全部用户列表"""
+    queryset = User.objects.filter(is_active=True)
+    context_object_name = 'users'
+    template_name = 'account/user/list.html'
+
+
+class FansListView(UserListView):
+    """展示粉丝列表"""
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        fans = user.fan0.all()
+        return fans
+
+
+class StarListView(UserListView):
+    """展示关注的人列表"""
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        stars = user.star0.all()
+        return stars
+
+
+class UserDetailView(generic.DetailView):
+    """展示用户详情"""
+    model = User
+    context_object_name = 'user'
+    template_name = 'account/user/detail.html'
+
+    def get_object(self, queryset=None):
+        """通过用户名获取用户"""
+        username = self.kwargs['username']
+        obj = get_object_or_404(User, username=username)
+        return obj
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = context['user']
+        articles = Article.published.filter(author=user).order_by('-created')
+        context['articles'] = articles
+        return context
+
+
+@login_required
+def follow_user(request):
+    """（取消）关注用户"""
+    user_id = int(request.POST.get('user_id'))
+    action = str(request.POST.get('action'))
+    if user_id == request.user.id:
+        return JsonResponse({'action': 'self'})
+    if user_id and action:
+        try:
+            if action == '关注':
+                Contact.objects.create(fans=request.user,
+                                       star_id=user_id)
+                json = {'action': '取消关注'}
+            else:
+                Contact.objects.filter(fans=request.user,
+                                       star_id=user_id).delete()
+                json = {'action': '关注'}
+            return JsonResponse(json)
+        except User.DoesNotExist:
+            return JsonResponse({})
+    return JsonResponse({})

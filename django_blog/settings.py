@@ -117,6 +117,11 @@ LOGOUT_REDIRECT_URL = None
 LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('account:profile')
 
+ABSOLUTE_URL_OVERRIDES = {
+    'account.user': lambda u: reverse_lazy('account:user_detail',
+                                           kwargs={'username': u.username})
+}
+
 # email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_SUBJECT_PREFIX = '[Django] '

@@ -12,5 +12,11 @@ urlpatterns = [
     path(r'password_change/', views.PasswordChangeView0.as_view(), name='password_change'),
     path(r'reset/<uidb64>/<token>/', views.ResetPasswordView.as_view(), name='password_reset_confirm'),
     # 头像
-    path(r'account/avatar_change/', views.change, name='change_avatar')
+    path(r'avatar_change/', views.change, name='change_avatar'),
+    # 用户列表/详情
+    path(r'users/', views.UserListView.as_view(), name='user_list'),
+    path(r'<str:username>/fans/', views.FansListView.as_view(), name='user_fans'),
+    path(r'<str:username>/stars/', views.StarListView.as_view(), name='user_stars'),
+    path(r'user/detail/<str:username>/', views.UserDetailView.as_view(), name='user_detail'),
+    path(r'user/follow/', views.follow_user, name='follow_user'),
 ]

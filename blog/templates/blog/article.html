@@ -8,8 +8,13 @@
         {# 显示文章 #}
         <h1>{{ article.title }}</h1>
         <p class="extra-info">
-            {% avatar user 25 class="circle-avatar" %}
-            {{ article.publish|date:"y/m/d" }} {{ article.author }}
+            <a href="{% url 'account:user_detail' article.author %}">
+                {% avatar article.author 25 class="circle-avatar" %}
+            </a>
+            <a href="{% url 'account:user_detail' article.author %}">
+                {{ article.author }}
+            </a>
+            {{ article.publish|date:"y/m/d" }}
             字数 {{ article.content|length }}
             评论数 {% comments_counts article %}
             阅读数 {{ article.read_times }}
@@ -47,8 +52,13 @@
         {% for comment in comments %}
             <div class="comment">
                 <p class="comment-author">
-                    {% avatar user 25 class="circle-avatar" %}
-                    {{ comment.author }} {{ comment.created |date:'y/m/d h:i' }}
+                    <a href="{% url 'account:user_detail' article.author %}">
+                        {% avatar article.author 25 class="circle-avatar" %}
+                    </a>
+                    <a href="{% url 'account:user_detail' article.author %}">
+                        {{ article.author }}
+                    </a>
+                    {{ comment.created |date:'y/m/d h:i' }}
                 </p>
                 <p>{{ comment }}</p>
             </div>

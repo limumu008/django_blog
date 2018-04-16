@@ -1,0 +1,44 @@
+/* 用户列表页 */
+#people-list {
+    margin-top: 20px;
+}
+
+#people-list .user {
+    margin-bottom: 20px;
+    padding-right: 20px;
+    float: left;
+    overflow: auto;
+}
+
+#people-list .info {
+    text-align: center;
+}
+
+/* 用户详情页 */
+.profile-info {
+    float: left;
+    overflow: auto;
+    margin-right: 20px;
+}
+
+/* 粉丝数 */
+.count {
+    color: #aaa;
+    border: 3px solid #bbb;
+    border-radius: 26px;
+    padding: 10px 20px;
+    margin: 20px 10px 0;
+}
+
+#follow-button {
+    border-radius: 20%;
+    padding: 4px 12px;
+    color: white;
+    font-weight: bolder;
+    background-color: #12c064;
+}
+
+/* 用户中心 */
+#self-avatar {
+    margin-bottom: 30px;
+}

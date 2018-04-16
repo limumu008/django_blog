@@ -16,7 +16,6 @@ from .models import Article
 
 class IndexView(generic.ListView):
     """文章展示页"""
-    queryset = Article.published.all()
     template_name = 'blog/index.html'
     context_object_name = 'articles'
     paginate_by = 10
@@ -51,7 +50,7 @@ class MyArticles(LoginRequiredMixin, IndexView):
             return Article.published.filter(tags__name__in=[tag]). \
                 filter(author=self.request.user).order_by('-publish')
         except KeyError:
-            return Article.objects.filter(author=self.request.user)
+            return Article.published.filter(author=self.request.user)
 
 
 class MyDrafts(LoginRequiredMixin, IndexView):

@@ -6,6 +6,22 @@ from django.utils.translation import gettext_lazy as _
 from django_blog import settings
 
 
+class Contact(models.Model):
+    fans = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE,
+                             related_name='fans')
+    star = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE,
+                             related_name='star')
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ('-created',)
+
+    def __str__(self):
+        return f"{fans} 关注了 {star}"
+
+
 class User(AbstractUser):
     username_validator = UnicodeUsernameValidator()
 
@@ -18,11 +34,14 @@ class User(AbstractUser):
                 'unique': _("用户已注册"),
             },
     )
+    star0 = models.ManyToManyField('self',
+                                   through=Contact,
+                                   related_name='fan0',
+                                   symmetrical=False)
 
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='users/%Y/%m/%d', blank=True)
     is_author = models.BooleanField(default=False)
 

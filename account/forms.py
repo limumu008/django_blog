@@ -125,7 +125,10 @@ class UpdateProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ('birth', 'photo')
+        fields = ('photo',)
+        labels = {
+            'photo': "头像",
+        }
 
 
 class ResetPasswordForm(SetPasswordForm):

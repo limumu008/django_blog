@@ -22,8 +22,13 @@
                 {% endfor %}
             </p>
             <p class="extra-info">
-                {% avatar user 25 class="circle-avatar" %}
-                {{ article.author }} {{ article.publish|date:"y/m/d" }}
+                <a href="{% url 'account:user_detail' article.author %}">
+                    {% avatar article.author 25 class="circle-avatar" %}
+                </a>
+                <a href="{% url 'account:user_detail' article.author %}">
+                    {{ article.author }}
+                </a>
+                {{ article.publish|date:"y/m/d" }}
                 评论数 {% comments_counts article %}
                 阅读数 {{ article.read_times }}
             </p>
