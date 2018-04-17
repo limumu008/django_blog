@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
+from django.db.models import Count
 from django.shortcuts import (
     get_object_or_404,
     redirect,
@@ -35,6 +36,12 @@ class IndexView(generic.ListView):
             context['tag'] = self.tag
             return context
         except AttributeError:
+            latest_articles = Article.published.order_by('-created')[:5]
+            context['latest_articles'] = latest_articles
+            random_articles = Article.published.order_by('?')[:5]
+            print(random_articles, type(random_articles))
+            context['random_articles'] = random_articles
+
             return context
 
 
@@ -113,6 +120,15 @@ class UpdateArticle(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView)
 def article_detail(request, pk):
     article = get_object_or_404(Article, id=pk)
     article.add_read_times()
+    # 检索相似
+    article_id_list = article.tags.values_list('id', flat=True)
+    similar_articles = Article.published.filter(
+            tags__in=article_id_list). \
+        exclude(id=article.id)
+    similar_articles = similar_articles.annotate(
+            same_tags=Count('tags')).order_by('-same_tags', '-created')[:5]
+    # 检索随机
+    random_articles = Article.published.order_by('?').exclude(id=article.id)[:5]
     comments = article.comments.filter(is_show=True)
     article_author = False
     if request.user.is_authenticated:
@@ -133,6 +149,8 @@ def article_detail(request, pk):
                'comments': comments,
                'comment_form': comment_form,
                'author_author': article_author,
+               'similar_articles': similar_articles,
+               'random_articles': random_articles,
                }
     return render(request, 'blog/article.html', context)
 

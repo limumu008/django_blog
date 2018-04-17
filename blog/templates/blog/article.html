@@ -68,3 +68,23 @@
     </article>
 
 {% endblock %}
+
+{% block aside %}
+    <h2>相似文章</h2>
+    <ul>
+        {% for article0 in similar_articles %}
+            <li>
+                <a href="{{ article0.get_absolute_url }}">{{ article0.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <h2>随机文章</h2>
+    <ul>
+        {% for article0 in random_articles %}
+            <li>
+                <a href="{{ article0.get_absolute_url }}">{{ article0.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

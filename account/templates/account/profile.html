@@ -1,6 +1,6 @@
 {% extends 'account/base.html' %}
 {% load avatar_tags account_tags %}
-{% block title %}我的信息{% endblock %}
+{% block title %}个人中心{% endblock %}
 
 {% block main %}
     <div class="col-md-6">
@@ -9,12 +9,21 @@
             {% avatar user 180 class="circle-avatar" %}
             <br>
         </div>
-        <a href="{% url 'account:user_fans' user.username %}">
+        {% if user.fan0.all %}
+            <a href="{% url 'account:user_fans' user.username %}">
+                <span class="count">粉丝：{% user_fans user %}</span>
+            </a>
+        {% else %}
             <span class="count">粉丝：{% user_fans user %}</span>
-        </a>
-        <a href="{% url 'account:user_stars' user.username %}">
+        {% endif %}
+        {% if user.star0.all %}
+            <a href="{% url 'account:user_stars' user.username %}">
+                <span class="count">关注的人：{% user_stars user %}</span>
+            </a>
+        {% else %}
             <span class="count">关注的人：{% user_stars user %}</span>
-        </a>
+        {% endif %}
+
     </div>
     <p><a href="{% url 'account:update_user' user.id %}">更新用户信息</a></p>
     <p><a href="{% url 'account:password_change' %}">修改密码</a></p>

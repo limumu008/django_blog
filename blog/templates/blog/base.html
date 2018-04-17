@@ -16,15 +16,7 @@
             <div class="col-md-1"></div>
             <aside class="col-md-4 aside">
                 {% block aside %}
-                    {% if request.user.is_authenticated %}
-                        <h2>我的博客</h2>
-                        {% if request.user.is_authenticated %}
-                            <p>我已经写了{% article_counts request.user %}篇文章</p>
-                            <p><a href="{% url 'blog:my_articles' %}">我的文章</a></p>
-                            <p>我已经写了{% draft_counts request.user %}篇草稿</p>
-                            <p><a href="{% url 'blog:my_drafts' %}">我的草稿</a></p>
-                        {% endif %}
-                    {% endif %}
+
                 {% endblock aside %}
             </aside>
         </div>
