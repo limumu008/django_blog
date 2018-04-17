@@ -22,14 +22,14 @@ class ArticleCommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         """修改 widget 尺寸"""
         super().__init__(*args, **kwargs)
-        self.fields['content'].widget.attrs.update({'cols':80, 'rows': 2})
+        self.fields['content'].widget.attrs.update({'cols': 80, 'rows': 2})
 
 
 class ArticleForm(forms.ModelForm):
     error_messages = {
         'languages': _('请使用英文标签及逗号'),
     }
-    content = MarkdownxFormField(label='文章内容')
+    content = MarkdownxFormField(label='文章内容', required=False)
 
     class Meta:
         model = Article

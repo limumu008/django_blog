@@ -11,6 +11,7 @@ from django.contrib.auth.views import PasswordChangeView, \
     PasswordResetConfirmView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ImproperlyConfigured
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -29,6 +30,8 @@ from account.forms import (PasswordChangeForm0,
                            UpdateProfileForm,
                            UpdateUserForm)
 from account.models import Contact, Profile
+from actions.models import Action
+from actions.utils import create_action
 from blog.models import Article
 
 User = get_user_model()
@@ -39,7 +42,25 @@ INTERNAL_RESET_SESSION_TOKEN = '_activate_account_token'
 @login_required
 def account_profile(request):
     user = request.user
-    return render(request, 'account/profile.html', {'user': user})
+    # 用户关注的人
+    stars = user.star0.all()
+    # star 动作流
+    action_list = Action.objects.filter(user__in=stars)
+    if action_list:
+        page_toggle = True
+    else:
+        page_toggle = False
+    # 动作流分页
+    paginator = Paginator(action_list, 10)
+    page = request.GET.get('page')
+    actions = paginator.get_page(page)
+    context = {
+        'user': user,
+        'page_toggle': page_toggle,
+        'actions': actions,
+
+    }
+    return render(request, 'account/profile.html', context)
 
 
 class RegisterView(generic.CreateView):
@@ -267,8 +288,16 @@ class UserDetailView(generic.DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user = context['user']
-        articles = Article.published.filter(author=user).order_by('-created')
-        context['articles'] = articles
+        context['articles'] = Article.published.filter(author=user).order_by('-created')
+        action_list = Action.objects.filter(user=user)
+        if action_list:
+            page_toggle = True
+        else:
+            page_toggle = False
+        context['page_toggle'] = page_toggle
+        paginator = Paginator(action_list, 10)
+        page = self.request.GET.get('page')
+        context['actions'] = paginator.get_page(page)
         return context
 
 
@@ -277,17 +306,21 @@ def follow_user(request):
     """（取消）关注用户"""
     user_id = int(request.POST.get('user_id'))
     action = str(request.POST.get('action'))
-    if user_id == request.user.id:
+    fan = request.user
+    star = get_object_or_404(User, id=user_id)
+    if star.id == fan.id:
         return JsonResponse({'action': 'self'})
     if user_id and action:
         try:
             if action == '关注':
-                Contact.objects.create(fans=request.user,
-                                       star_id=user_id)
+                Contact.objects.create(fans=fan,
+                                       star=star)
+                create_action(fan, star, f"{fan.username} 关注了 {star.username}")
                 json = {'action': '取消关注'}
             else:
-                Contact.objects.filter(fans=request.user,
-                                       star_id=user_id).delete()
+                Contact.objects.filter(fans=fan,
+                                       star=star).delete()
+                create_action(fan, star, f"{fan.username} 取消了关注 {star.username}")
                 json = {'action': '关注'}
             return JsonResponse(json)
         except User.DoesNotExist:

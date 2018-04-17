@@ -15,7 +15,7 @@ class Article(models.Model):
         ('draft', 'Draft'),
         ('published', 'Published'))
     title = models.CharField(max_length=50)
-    content = models.TextField()
+    content = models.TextField(blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

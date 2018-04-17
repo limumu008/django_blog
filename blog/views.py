@@ -11,6 +11,7 @@ from django.shortcuts import (
 from django.views import generic
 from taggit.models import Tag
 
+from actions.utils import create_action
 from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm)
 from .models import Article
 
@@ -36,11 +37,9 @@ class IndexView(generic.ListView):
             context['tag'] = self.tag
             return context
         except AttributeError:
-            latest_articles = Article.published.order_by('-created')[:5]
-            context['latest_articles'] = latest_articles
-            random_articles = Article.published.order_by('?')[:5]
-            print(random_articles, type(random_articles))
-            context['random_articles'] = random_articles
+            context['latest_articles'] = Article.published.order_by('-created')[:5]
+
+            context['random_articles'] = Article.published.order_by('?')[:5]
 
             return context
 
@@ -107,6 +106,8 @@ class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
         article = form.save(commit=False)
         article.author = self.request.user
         article.save()
+        create_action(article.author, article,
+                      f"{article.author.username} 发表了文章《{article.title}》")
         return super().form_valid(form)
 
 
@@ -116,9 +117,18 @@ class UpdateArticle(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView)
     template_name = 'blog/update_article.html'
     success_message = '修改成功'
 
+    def form_valid(self, form):
+        article = form.save(commit=False)
+        author = self.request.user
+        article.save()
+        create_action(article.author, article,
+                      f"{author.username} 修改了文章《{article.title}》")
+        return super().form_valid(form)
+
 
 def article_detail(request, pk):
     article = get_object_or_404(Article, id=pk)
+    # 添加阅读次数
     article.add_read_times()
     # 检索相似
     article_id_list = article.tags.values_list('id', flat=True)
@@ -130,11 +140,13 @@ def article_detail(request, pk):
     # 检索随机
     random_articles = Article.published.order_by('?').exclude(id=article.id)[:5]
     comments = article.comments.filter(is_show=True)
+    # 判断是否文章作者，以决定是否显示修改文章按钮。
     article_author = False
     if request.user.is_authenticated:
         user = request.user
         if article.author == user:
             article_author = True
+    # 评论
     if request.method == 'POST':
         comment_form = ArticleCommentForm(request.POST)
         if comment_form.is_valid():
@@ -142,6 +154,8 @@ def article_detail(request, pk):
             new_comment.author = request.user
             new_comment.article = article
             new_comment.save()
+            create_action(request.user, article,
+                          verb=f"{request.user.username} 评论了文章《{article.title}》")
             messages.success(request, '评论成功')
     else:
         comment_form = ArticleCommentForm()
@@ -168,6 +182,8 @@ def share_article(request, id):
             message = f"{article_url} " \
                       f"{cd['name']}的评论：{cd['comment']}"
             send_mail(subject, message, 'wangzhou8284@163.com', [cd['to']])
+            create_action(request.user, article,
+                          verb=f"{request.user.username} 分享了文章《{article.title}》")
             messages.success(request, '分享成功')
             return redirect(article)
     else:
