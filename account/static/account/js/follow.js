@@ -22,7 +22,7 @@ $(document).ready(function () {
                         alert('不能关注自己');
                     }
                     else {
-                        alert('您尚未登录，请登录后继续操作');
+                        window.location.href = data['url']
                     }
                 }
             });

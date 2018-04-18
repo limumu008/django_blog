@@ -38,14 +38,12 @@
         <p><a href="{% url 'blog:share_article' id=article.id %}">分享文章</a></p>
 
         {# 新评论 #}
-        {% if request.user.is_authenticated %}
-            <h2>创建新评论：</h2>
-            <form action="." method="post">
-                {{ comment_form.as_p }}
-                {% csrf_token %}
-                <input type="submit" value="评论">
-            </form>
-        {% endif %}
+        <h2>创建新评论：</h2>
+        <form action="." method="post">
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <input type="submit" value="评论">
+        </form>
         <br>
         {# 显示评论 #}
 

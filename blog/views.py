@@ -148,6 +148,9 @@ def article_detail(request, pk):
             article_author = True
     # 评论
     if request.method == 'POST':
+        if request.user.is_anonymous:
+            # 如未登录重定向到登录
+            return redirect('login')
         comment_form = ArticleCommentForm(request.POST)
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)

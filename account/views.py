@@ -14,7 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
@@ -301,28 +301,31 @@ class UserDetailView(generic.DetailView):
         return context
 
 
-@login_required
 def follow_user(request):
     """（取消）关注用户"""
     user_id = int(request.POST.get('user_id'))
     action = str(request.POST.get('action'))
     fan = request.user
     star = get_object_or_404(User, id=user_id)
-    if star.id == fan.id:
-        return JsonResponse({'action': 'self'})
-    if user_id and action:
-        try:
-            if action == '关注':
-                Contact.objects.create(fans=fan,
-                                       star=star)
-                create_action(fan, star, f"{fan.username} 关注了 {star.username}")
-                json = {'action': '取消关注'}
-            else:
-                Contact.objects.filter(fans=fan,
-                                       star=star).delete()
-                create_action(fan, star, f"{fan.username} 取消了关注 {star.username}")
-                json = {'action': '关注'}
-            return JsonResponse(json)
-        except User.DoesNotExist:
-            return JsonResponse({})
-    return JsonResponse({})
+    if request.user.is_anonymous:
+        return JsonResponse({'action': 'redirect',
+                             'url': reverse('login')})
+    else:
+        if star.id == fan.id:
+            return JsonResponse({'action': 'self'})
+        if user_id and action:
+            try:
+                if action == '关注':
+                    Contact.objects.create(fans=fan,
+                                           star=star)
+                    create_action(fan, star, f"{fan.username} 关注了 {star.username}")
+                    json = {'action': '取消关注'}
+                else:
+                    Contact.objects.filter(fans=fan,
+                                           star=star).delete()
+                    create_action(fan, star, f"{fan.username} 取消了关注 {star.username}")
+                    json = {'action': '关注'}
+                return JsonResponse(json)
+            except User.DoesNotExist:
+                return JsonResponse({})
+        return JsonResponse({})
