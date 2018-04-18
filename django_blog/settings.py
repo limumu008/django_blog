@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 with open('django_blog/key.txt') as f:
     SECRET_KEY = f.read().strip()
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', 'qinglanjun.com', '.qinglanjun.com']
 
@@ -68,7 +68,7 @@ DATABASES = {
         'host': 'localhost',
         'TIME_ZONE': 'Asia/Shanghai',
         'OPTIONS': {
-            'read_default_file': 'W:\mysql\my.ini',
+            'read_default_file': '/etc/mysql/my.cnf',
             'isolation_level': 'read committed',
             'init_command': 'SET default_storage_engine=INNODB',
         }
@@ -149,3 +149,62 @@ X_FRAME_OPTIONS = 'DENY'
 MARKDOWNX_MARKDOWN_EXTENSIONS = ['markdown.extensions.extra',
                                  'markdown.extensions.codehilite',
                                  'markdown.extensions.toc']
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/django.log',
+        },
+        'request': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/request.log',
+        },
+        'server': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/server.log',
+        },
+        'template': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/template.log',
+        },
+        'debuglog': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/debuglog.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['request'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['server'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.template': {
+            'handlers': ['template'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'debuglog': {
+            'handlers': ['debuglog'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
