@@ -68,7 +68,7 @@ DATABASES = {
         'host': 'localhost',
         'TIME_ZONE': 'Asia/Shanghai',
         'OPTIONS': {
-            'read_default_file': 'W:\mysql\my.ini',
+            'read_default_file': 'C:\ProgramData\MySQL\MySQL Server 5.7\my.ini',
             'isolation_level': 'read committed',
             'init_command': 'SET default_storage_engine=INNODB',
         }

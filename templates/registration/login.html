@@ -17,7 +17,7 @@
         {% endif %}
     {% endif %}
     <p>请使用下面的表单进行登录：</p>
-    <div class="login-form">
+    <div>
         <form method="post" action=".">
             {% csrf_token %}
             <table>
@@ -31,7 +31,7 @@
                 </tr>
             </table>
 
-            <input type="submit" value="登录"/>
+            <input type="submit" class="btn btn-success" value="登录"/>
             <input type="hidden" name="next" value="{{ next }}"/>
         </form>
     </div>

@@ -1,13 +1,13 @@
 $(document).ready(function () {
     $('#follow-button').click(function () {
-        $.post(post_url,
+        var now_fans = parseInt($('#total-fans').text());
+        $.post(follow_url,
             {
                 user_id: user_id,
                 action: $('#follow-button').attr('value')
             },
             function (data) {
                 {
-                    var now_fans = parseInt($('#total-fans').text());
                     if (data['action'] === '取消关注') {
                         $('#follow-button').text(data['action']).val(data['action']);
                         now_fans += 1;

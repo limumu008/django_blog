@@ -1,19 +1,23 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import (
     get_object_or_404,
     redirect,
     render
 )
+from django.urls import reverse
 from django.views import generic
 from taggit.models import Tag
 
 from actions.utils import create_action
+from blog.utils import create_like_article
 from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm)
-from .models import Article
+from .models import Article, Likes
 
 
 class IndexView(generic.ListView):
@@ -162,12 +166,22 @@ def article_detail(request, pk):
             messages.success(request, '评论成功')
     else:
         comment_form = ArticleCommentForm()
+    # 控制赞开关的变量
+    try:
+        content_type = ContentType.objects.get_for_model(article)
+        like = Likes.objects.get(user=request.user,
+                                 content_type=content_type,
+                                 object_id=article.id)
+        is_liked = like.is_liked
+    except Exception as e:
+        is_liked = False
     context = {'article': article,
                'comments': comments,
                'comment_form': comment_form,
                'author_author': article_author,
                'similar_articles': similar_articles,
                'random_articles': random_articles,
+               'is_liked': is_liked,
                }
     return render(request, 'blog/article.html', context)
 
@@ -206,3 +220,19 @@ def retrieve_tags(request):
             if tag not in tags:
                 tags.append(tag)
     return render(request, 'blog/retrieve_tags.html', {'tags': tags})
+
+
+def user_like(request):
+    """用户给文章或评论点赞"""
+    # 用户未登录，重定向
+    if request.user.is_anonymous:
+        return JsonResponse({'status': 'redirect',
+                             'url': reverse('login')
+                             })
+    # 用户登录
+    article_id = int(request.POST.get('article_id'))
+    article = get_object_or_404(Article, pk=article_id)
+    # 用户点/取消赞
+    like = create_like_article(request.user, article)
+    is_liked = like.is_liked
+    return JsonResponse({'status': is_liked})

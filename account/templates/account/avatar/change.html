@@ -20,7 +20,8 @@
         {% endif %}
         <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
             {{ upload_avatar_form.as_p }}
-            <p>{% csrf_token %}<input type="submit" value="上传新头像"></p>
+            <p>{% csrf_token %}
+                <input type="submit" class="btn btn-default" value="上传新头像"></p>
         </form>
     </div>
 

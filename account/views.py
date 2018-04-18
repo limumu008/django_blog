@@ -45,7 +45,7 @@ def account_profile(request):
     # 用户关注的人
     stars = user.star0.all()
     # star 动作流
-    action_list = Action.objects.filter(user__in=stars)
+    action_list = Action.objects.filter(user__in=stars)[:50]
     if action_list:
         page_toggle = True
     else:
@@ -289,7 +289,7 @@ class UserDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         user = context['user']
         context['articles'] = Article.published.filter(author=user).order_by('-created')
-        action_list = Action.objects.filter(user=user)
+        action_list = Action.objects.filter(user=user)[:50]
         if action_list:
             page_toggle = True
         else:

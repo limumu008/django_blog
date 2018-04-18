@@ -19,7 +19,7 @@ class Contact(models.Model):
         ordering = ('-created',)
 
     def __str__(self):
-        return f"{fans} 关注了 {star}"
+        return f"{self.fans.username} 关注了 {self.star.username}"
 
 
 class User(AbstractUser):

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Article, Comment
+from .models import Article, Comment, Likes
 
 
 class CommentInline(admin.TabularInline):
@@ -16,4 +16,9 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [CommentInline]
 
 
+class LikesAdmin(admin.ModelAdmin):
+    list_display = ('user', 'created', 'is_liked')
+
+
 admin.site.register(Article, ArticleAdmin)
+admin.site.register(Likes, LikesAdmin)

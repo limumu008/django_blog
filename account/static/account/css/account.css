@@ -32,10 +32,8 @@
 
 #follow-button {
     border-radius: 20%;
-    padding: 4px 12px;
-    color: white;
+    padding: 5px 12px;
     font-weight: bolder;
-    background-color: #12c064;
 }
 
 /* 用户中心 */

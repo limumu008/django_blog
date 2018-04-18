@@ -1,0 +1,25 @@
+{% load avatar_tags blog_tags %}
+<article class="index">
+    <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
+    <p>
+        {% for tag in article.tags.all %}
+            <a href="{% url 'blog:tag_index' tag.slug %}">
+                <span class="tags">{{ tag.name }}</span>
+            </a>
+            {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+    <p class="extra-info">
+        <a href="{% url 'account:user_detail' article.author %}">
+            {% avatar article.author 25 class="circle-avatar" %}
+        </a>
+        <a href="{% url 'account:user_detail' article.author %}">
+            {{ article.author }}
+        </a>
+        {{ article.publish|date:"y/m/d" }}
+        评论数 {% comments_counts article %}
+        赞 <span class="liked-count">{% article_likes article %}</span>
+        阅读数 {{ article.read_times }}
+    </p>
+    <p class="article">{{ article.content|markdown_format|truncatechars:120 }}</p>
+</article>

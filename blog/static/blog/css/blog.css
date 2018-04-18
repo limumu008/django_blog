@@ -20,7 +20,6 @@ article.index {
 }
 
 div.comment {
-    background-color: #a6e1ec;
     padding-left: 20px;
 }
 
@@ -31,11 +30,8 @@ p.comment-author {
     padding-top: 5px;
 }
 
-.tags {
-    background-color: darkblue;
-    color: ghostwhite;
-    padding: 2px 4px;
-    font-size: 1em;
+p.comment-body {
+    padding-left: 28px;
 }
 
 .index-tags {
@@ -54,3 +50,6 @@ article.archive-article {
     background-color: white;
 }
 
+#like_article_btn {
+    float: right;
+}

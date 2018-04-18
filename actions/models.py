@@ -12,6 +12,7 @@ class Action(models.Model):
                              related_name='user')
     verb = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated = models.DateTimeField(auto_now=True, db_index=True)
     # generic relation
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()

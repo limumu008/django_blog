@@ -10,7 +10,7 @@
                 <form action="." method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <input type="submit" value="发布新文章">
+                    <input type="submit" class="btn btn-success" value="发布新文章">
                 </form>
                 {{ form.media }}
             </div>

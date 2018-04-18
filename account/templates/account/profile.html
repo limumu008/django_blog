@@ -29,8 +29,10 @@
         <h2>动态</h2>
         {% for action in actions %}
             <ul>
-                <li>{{ action.created|naturaltime }} : {{ action.verb }}</li>
+                <li>{{ action.updated|naturaltime }} : {{ action.verb }}</li>
             </ul>
+        {% empty %}
+            <p>关注其他人，就可以在这里获得他的动态啦。</p>
         {% endfor %}
         {% if page_toggle %}
             {% include 'paginator.html' with page=actions %}

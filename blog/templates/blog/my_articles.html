@@ -9,22 +9,7 @@
     {% endif %}
 
     {% for article in my_articles %}
-        <article class="index">
-            <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
-            <p>
-                {% for tag in article.tags.all %}
-                    <a href="{% url 'blog:my_articles_tags' tag.slug %}">
-                        <span class="tags">{{ tag.name }}</span>
-                    </a>
-                    {% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </p>
-            <p class="extra-info">{{ article.publish|date:"y/m/d" }} {{ article.author }}
-                评论数 {% comments_counts article %}
-                阅读数 {{ article.read_times }}
-            </p>
-            <p class="article">{{ article.content|markdown_format|truncatechars:120 }}</p>
-        </article>
+        {% include 'blog/include/in_article.html' with article=article %}
     {% empty %}
         <p>暂无文章</p>
     {% endfor %}

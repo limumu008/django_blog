@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import F
 from django.utils import timezone
@@ -52,7 +54,23 @@ class Comment(models.Model):
     is_show = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ('created',)
+        ordering = ('-created',)
 
     def __str__(self):
         return f"{self.content}"
+
+
+class Likes(models.Model):
+    """点赞"""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE,
+                             related_name='likes')
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    is_liked = models.BooleanField(default=True)
+    content_type = models.ForeignKey(ContentType,
+                                     on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    likes_target = GenericForeignKey()
+
+    def __str__(self):
+        return f"{self.user.username}赞了{self.likes_target}"
