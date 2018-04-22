@@ -1,12 +1,21 @@
 {% extends 'account/base.html' %}
-{% load avatar_tags account_tags humanize %}
+{% load avatar_tags account_tags humanize blog_tags %}
 {% block title %}个人中心{% endblock %}
+{% block extra_js %}
+    <script>
+        $(document).ready(function () {
+            $('.circle-avatar').mouseover(function () {
+
+            });
+        });
+    </script>
+{% endblock %}
 
 {% block main %}
     <div class="col-md-4">
         <h1>我的信息</h1>
         <div id="self-avatar">
-            {% avatar user 180 class="circle-avatar" %}
+            <a href="{% url 'account:change_avatar' %}">{% avatar user 180 class="circle-avatar" %}</a>
             <br>
         </div>
         {% if user.fan0.all %}
@@ -39,10 +48,12 @@
         {% endif %}
     </div>
     <div class="col-md-2">
-        <h2>操作</h2>
-        <p><a href="{% url 'account:update_user' user.id %}">更新用户信息</a></p>
-        <p><a href="{% url 'account:password_change' %}">修改密码</a></p>
-        <p><a href="{% url 'logout' %}">注销登录</a></p>
-        <a href="{% url 'account:change_avatar' %}">修改头像</a>
+        <h2>我的博客</h2>
+        {% if request.user.is_authenticated %}
+            <p>我已经写了{% article_counts request.user %}篇文章</p>
+            <p><a href="{% url 'blog:my_articles' %}">我的文章</a></p>
+            <p>我已经写了{% draft_counts request.user %}篇草稿</p>
+            <p><a href="{% url 'blog:my_drafts' %}">我的草稿</a></p>
+        {% endif %}
     </div>
 {% endblock %}

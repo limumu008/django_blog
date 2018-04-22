@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from markdownx.fields import MarkdownxFormField
 
-from blog.models import Article, Comment
+from blog.models import Article, Comment, Reply
 
 
 class EmailArticleForm(forms.Form):
@@ -23,6 +23,12 @@ class ArticleCommentForm(forms.ModelForm):
         """修改 widget 尺寸"""
         super().__init__(*args, **kwargs)
         self.fields['content'].widget.attrs.update({'cols': 80, 'rows': 2})
+
+
+class ReplyForm(forms.ModelForm):
+    class Meta:
+        model = Reply
+        fields = ('comment', 'content',)
 
 
 class ArticleForm(forms.ModelForm):
@@ -57,8 +63,8 @@ class ArticleForm(forms.ModelForm):
                     pass
                 else:
                     raise forms.ValidationError(
-                            self.error_messages['languages'],
-                            code='languages',
+                        self.error_messages['languages'],
+                        code='languages',
                     )
         else:
             return tags

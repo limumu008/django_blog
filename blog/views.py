@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.db.models import Count
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import (
     get_object_or_404,
     redirect,
@@ -12,11 +12,12 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 from django.views import generic
+from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
 from actions.utils import create_action
 from blog.utils import create_like_article
-from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm)
+from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm)
 from .models import Article, Likes
 
 
@@ -93,7 +94,7 @@ def archives(request):
         else:
             month_str = str(year) + '-' + str(month)
         articles = Article.published.filter(
-                publish__startswith=month_str).order_by('-publish')
+            publish__startswith=month_str).order_by('-publish')
         archives.append(articles)
     date_archives = zip(dates, archives)
     context = {'date_archives': date_archives}
@@ -109,10 +110,13 @@ class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     def form_valid(self, form):
         article = form.save(commit=False)
         article.author = self.request.user
-        article.save()
-        create_action(article.author, article,
-                      f"{article.author.username} 发表了文章《{article.title}》")
-        return super().form_valid(form)
+        if article.author.profile.is_author:
+            article.save()
+            create_action(article.author, article,
+                          f"{article.author.username} 发表了文章《{article.title}》")
+            return super().form_valid(form)
+        else:
+            raise Http404("你不是作者，不能发表文章")
 
 
 class UpdateArticle(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
@@ -137,12 +141,13 @@ def article_detail(request, pk):
     # 检索相似
     article_id_list = article.tags.values_list('id', flat=True)
     similar_articles = Article.published.filter(
-            tags__in=article_id_list). \
+        tags__in=article_id_list). \
         exclude(id=article.id)
     similar_articles = similar_articles.annotate(
-            same_tags=Count('tags')).order_by('-same_tags', '-created')[:5]
+        same_tags=Count('tags')).order_by('-same_tags', '-created')[:5]
     # 检索随机
     random_articles = Article.published.order_by('?').exclude(id=article.id)[:5]
+    # 检索评论
     comments = article.comments.filter(is_show=True)
     # 判断是否文章作者，以决定是否显示修改文章按钮。
     article_author = False
@@ -173,7 +178,7 @@ def article_detail(request, pk):
                                  content_type=content_type,
                                  object_id=article.id)
         is_liked = like.is_liked
-    except Exception as e:
+    except Likes.DoesNotExist as e:
         is_liked = False
     context = {'article': article,
                'comments': comments,
@@ -236,3 +241,29 @@ def user_like(request):
     like = create_like_article(request.user, article)
     is_liked = like.is_liked
     return JsonResponse({'status': is_liked})
+
+
+@require_POST
+def reply(request):
+    """回复评论"""
+    if request.POST.get('action') == 'test_user':
+        if request.user.is_anonymous:
+            return JsonResponse({'status': 'redirect',
+                                 'login_url': reverse('login')})
+        else:
+            return JsonResponse({'status': 'ko'})
+    reply_form = ReplyForm(request.POST)
+    # 新回复
+    if reply_form.is_valid():
+        new_reply = reply_form.save(commit=False)
+        new_reply.author = request.user
+        new_reply.reply_target = new_reply.comment.author
+        new_reply.save()
+        print('save over')
+        create_action(user=request.user,
+                      target=new_reply.comment,
+                      verb=f"{request.user.username} 回复了评论 '{new_reply}'")
+        print('action')
+        reply_content = f"<p><span class='temp_reply'>{request.user.username}</span> : {new_reply}</p>"
+        return JsonResponse({'status': 'reply_ok',
+                             'reply_text': reply_content})

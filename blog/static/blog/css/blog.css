@@ -1,10 +1,5 @@
 .aside {
     margin-top: 20px;
-    background-color: white;
-}
-
-article.article {
-    line-height: 1.8;
 }
 
 p.extra-info {
@@ -12,14 +7,13 @@ p.extra-info {
 }
 
 article.index {
-    margin: 20px 0;
     padding-top: 2px;
     padding-left: 20px;
     border-bottom: outset;
-    background-color: white;
 }
 
 div.comment {
+    margin-top: 10px;
     padding-left: 20px;
 }
 
@@ -32,6 +26,16 @@ p.comment-author {
 
 p.comment-body {
     padding-left: 28px;
+}
+
+.input_reply {
+    width: 100%;
+}
+
+.replies-list {
+    margin-left: 20px;
+    border-left: #D9D9D9 2px solid;
+    padding-left: 25px;
 }
 
 .index-tags {
@@ -47,9 +51,17 @@ article.archive-article {
     border: outset;
     padding-left: 20px;
     margin-bottom: 20px;
-    background-color: white;
 }
 
 #like_article_btn {
     float: right;
+}
+
+/* else */
+button.reply {
+    margin-bottom: 10px;
+}
+
+p.temp_reply {
+    color: blue;
 }

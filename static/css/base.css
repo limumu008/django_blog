@@ -1,28 +1,27 @@
 body {
+    margin-top: 30px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: medium;
-    padding-top: 70px;
+    padding-top: 40px;
     min-height: 2000px;
     background-color: #f6f6f6;
 }
 
-header {
-    background-color: #12c064;
-    color: #337ab7;
-    height: 70px;
-    padding: 10px 100px;
-    border-bottom: ridge 4px;
+nav {
+    /*border-bottom: ridge 4px;*/
     font-size: 1.2em;
     font-weight: bolder;
 }
 
-#hello {
+.hello {
     font-size: 0.8em;
 }
 
 .pag {
     margin: 40px 0;
     font-weight: bold;
+    width: 100%;
+    text-align: center;
 }
 
 .messages {
@@ -59,4 +58,20 @@ header {
 /* 圆形头像 */
 .circle-avatar {
     border-radius: 50%;
+}
+
+a:link {
+    color: blue
+}
+
+a:visited {
+    color: purple
+}
+
+a:hover {
+    color: #FF00FF
+}
+
+a:active {
+    color: red
 }

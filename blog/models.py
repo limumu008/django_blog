@@ -60,6 +60,25 @@ class Comment(models.Model):
         return f"{self.content}"
 
 
+class Reply(models.Model):
+    """评论的回复"""
+    comment = models.ForeignKey(Comment,
+                                on_delete=models.CASCADE, related_name='replies',
+                                verbose_name='挂载回复的评论')
+    reply_target = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                     on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL,
+                               on_delete=models.CASCADE, related_name='author')
+    created = models.DateTimeField(auto_now_add=True)
+    content = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return self.content
+
+
 class Likes(models.Model):
     """点赞"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL,

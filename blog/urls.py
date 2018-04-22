@@ -17,4 +17,5 @@ urlpatterns = [
     path(r'article/new/', views.NewArticle.as_view(), name='new_article'),
     path(r'article/update/<int:pk>/', views.UpdateArticle.as_view(), name='update_article'),
     path(r'user_like', views.user_like, name='user_like'),
+    path(r'reply', views.reply, name='reply'),
 ]

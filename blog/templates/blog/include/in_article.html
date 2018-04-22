@@ -21,5 +21,5 @@
         赞 <span class="liked-count">{% article_likes article %}</span>
         阅读数 {{ article.read_times }}
     </p>
-    <p class="article">{{ article.content|markdown_format|truncatechars:120 }}</p>
+    <p>{{ article.content|markdown_format|truncatechars:120 }}</p>
 </article>
