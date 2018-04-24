@@ -7,7 +7,7 @@
     {% for tag in tags %}
         <div>
             <a class="btn btn-info" href="{% url 'blog:tag_index' tag.slug %}">
-                <span class="index-tags">{{ tag.name }}</span>
+                <span class="index_tags">{{ tag.name }}</span>
             </a>
         </div>
     {% endfor %}

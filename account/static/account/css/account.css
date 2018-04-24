@@ -1,20 +1,20 @@
 /* 用户列表页 */
-#people-list {
+#people_list {
 }
 
-#people-list .user {
+#people_list .user {
     margin-bottom: 20px;
     padding-right: 20px;
     float: left;
     overflow: auto;
 }
 
-#people-list .info {
+#people_list .info {
     text-align: center;
 }
 
 /* 用户详情页 */
-.profile-info {
+.profile_info {
     float: left;
     overflow: auto;
     margin-right: 20px;
@@ -29,13 +29,13 @@
     margin: 20px 10px 0;
 }
 
-#follow-button {
+#follow_button {
     border-radius: 20%;
     padding: 5px 12px;
     font-weight: bolder;
 }
 
 /* 用户中心 */
-#self-avatar {
+#self_avatar {
     margin-bottom: 30px;
 }

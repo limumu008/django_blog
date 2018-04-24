@@ -1,22 +1,22 @@
 $(document).ready(function () {
-    $('#follow-button').click(function () {
-        var now_fans = parseInt($('#total-fans').text());
+    $('#follow_button').click(function () {
+        let now_fans = parseInt($('#total_fans').text());
         $.post(follow_url,
             {
                 user_id: user_id,
-                action: $('#follow-button').attr('value')
+                action: $('#follow_button').val()
             },
             function (data) {
                 {
                     if (data['action'] === '取消关注') {
-                        $('#follow-button').text(data['action']).val(data['action']);
+                        $('#follow_button').text(data['action']).val(data['action']);
                         now_fans += 1;
-                        $('#total-fans').text(now_fans);
+                        $('#total_fans').text(now_fans);
                     }
                     else if (data['action'] === '关注') {
-                        $('#follow-button').text(data['action']).val(data['action']);
+                        $('#follow_button').text(data['action']).val(data['action']);
                         now_fans -= 1;
-                        $('#total-fans').text(now_fans);
+                        $('#total_fans').text(now_fans);
                     }
                     else if (data['action'] === 'self') {
                         alert('不能关注自己');

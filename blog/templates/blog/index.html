@@ -2,8 +2,6 @@
 {% load static blog_tags avatar_tags %}
 {% block title %}博客首页{% endblock title %}
 
-
-
 {% block main %}
 
     {% if tag %}
@@ -13,7 +11,9 @@
     {% for article in articles %}
         {% include 'blog/include/in_article.html' with article=article %}
     {% endfor %}
-    {% include 'paginator.html' with page=page_obj %}
+    {% if page_toggle %}
+        {% include 'paginator.html' with page=page_obj %}
+    {% endif %}
 {% endblock main %}
 
 {% block aside %}

@@ -13,8 +13,6 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
 
-from account.models import Profile
-
 
 class RegisterForm(UserCreationForm):
     """用于注册用户"""
@@ -26,17 +24,17 @@ class RegisterForm(UserCreationForm):
     email = forms.EmailField(max_length=50, required=True, label='邮箱',
                              help_text='用于重置密码等')
     password1 = forms.CharField(
-            label=_("密码"),
-            strip=False,
-            widget=forms.PasswordInput,
-            help_text='不能少于8位，不能只是数字，不能与用户名相同'
+        label=_("密码"),
+        strip=False,
+        widget=forms.PasswordInput,
+        help_text='不能少于8位，不能只是数字，不能与用户名相同'
     )
     password2 = forms.CharField(
-            label=_("重复密码"),
-            widget=forms.PasswordInput,
-            strip=False,
-            help_text=_(
-                    "再次输入密码"),
+        label=_("重复密码"),
+        widget=forms.PasswordInput,
+        strip=False,
+        help_text=_(
+            "再次输入密码"),
     )
 
     class Meta:
@@ -54,8 +52,8 @@ class RegisterForm(UserCreationForm):
                 pass
             else:
                 raise forms.ValidationError(
-                        self.error_messages['email_exists'],
-                        code='email_exists',
+                    self.error_messages['email_exists'],
+                    code='email_exists',
                 )
         else:
             return email
@@ -102,8 +100,8 @@ class RegisterForm(UserCreationForm):
         if extra_email_context is not None:
             context.update(extra_email_context)
         self.send_mail(
-                subject_template_name, email_template_name, context, from_email,
-                email, html_email_template_name=html_email_template_name,
+            subject_template_name, email_template_name, context, from_email,
+            email, html_email_template_name=html_email_template_name,
         )
 
 
@@ -120,31 +118,20 @@ class UpdateUserForm(forms.ModelForm):
         }
 
 
-class UpdateProfileForm(forms.ModelForm):
-    """更新用户其他信息"""
-
-    class Meta:
-        model = Profile
-        fields = ('photo',)
-        labels = {
-            'photo': "头像",
-        }
-
-
 class ResetPasswordForm(SetPasswordForm):
     error_messages = {
         'password_mismatch': _("两次密码不相同"),
     }
     new_password1 = forms.CharField(
-            label=_("新密码"),
-            widget=forms.PasswordInput,
-            strip=False,
-            help_text='至少8位，不能全是数字',
+        label=_("新密码"),
+        widget=forms.PasswordInput,
+        strip=False,
+        help_text='至少8位，不能全是数字',
     )
     new_password2 = forms.CharField(
-            label=_("新密码确认"),
-            strip=False,
-            widget=forms.PasswordInput,
+        label=_("新密码确认"),
+        strip=False,
+        widget=forms.PasswordInput,
     )
 
 
@@ -155,20 +142,20 @@ class PasswordChangeForm0(PasswordChangeForm):
         'password_same': _("新密码与旧密码相同"),
     })
     old_password = forms.CharField(
-            label=_("旧密码"),
-            strip=False,
-            widget=forms.PasswordInput(attrs={'autofocus': True}),
+        label=_("旧密码"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autofocus': True}),
     )
     new_password1 = forms.CharField(
-            label=_("新密码"),
-            widget=forms.PasswordInput,
-            strip=False,
-            help_text='至少8位，与旧密码不同，不能全是数字',
+        label=_("新密码"),
+        widget=forms.PasswordInput,
+        strip=False,
+        help_text='至少8位，与旧密码不同，不能全是数字',
     )
     new_password2 = forms.CharField(
-            label=_("新密码确认"),
-            strip=False,
-            widget=forms.PasswordInput,
+        label=_("新密码确认"),
+        strip=False,
+        widget=forms.PasswordInput,
     )
 
     def clean_new_password1(self):
@@ -177,7 +164,7 @@ class PasswordChangeForm0(PasswordChangeForm):
         password1 = self.cleaned_data.get('new_password1')
         if password1 == old_password:
             raise forms.ValidationError(
-                    self.error_messages['password_same'],
-                    code='password_same',
+                self.error_messages['password_same'],
+                code='password_same',
             )
         return password1

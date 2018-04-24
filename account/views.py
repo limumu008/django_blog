@@ -27,12 +27,12 @@ from django.views.generic import TemplateView
 from account.forms import (PasswordChangeForm0,
                            RegisterForm,
                            ResetPasswordForm,
-                           UpdateProfileForm,
                            UpdateUserForm)
 from account.models import Contact, Profile
 from actions.models import Action
 from actions.utils import create_action
 from blog.models import Article
+from blog.utils import toggle_pages
 
 User = get_user_model()
 INTERNAL_RESET_URL_TOKEN = 'activate_account'
@@ -46,10 +46,8 @@ def account_profile(request):
     stars = user.star0.all()
     # star 动作流
     action_list = Action.objects.filter(user__in=stars)[:50]
-    if action_list:
-        page_toggle = True
-    else:
-        page_toggle = False
+    # 分页开关
+    page_toggle = toggle_pages(action_list)
     # 动作流分页
     paginator = Paginator(action_list, 10)
     page = request.GET.get('page')
@@ -175,20 +173,14 @@ def update_user(request, pk):
     user = User.objects.get(pk=pk)
     if request.method == "POST":
         user_form = UpdateUserForm(instance=user, data=request.POST)
-        profile_form = UpdateProfileForm(instance=user.profile,
-                                         data=request.POST,
-                                         files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user_form.save()
-            profile_form.save()
             messages.success(request, "更新成功")
-
+            return redirect(user)
     else:
         user_form = UpdateUserForm(instance=user)
-        profile_form = UpdateProfileForm(instance=user.profile)
     return render(request, 'account/update.html',
-                  {"user_form": user_form,
-                   "profile_form": profile_form})
+                  {"user_form": user_form})
 
 
 class PasswordChangeView0(SuccessMessageMixin, PasswordChangeView):
@@ -227,7 +219,7 @@ def change(request, extra_context=None, next_override=None,
         updated = False
         if 'choice' in request.POST and primary_avatar_form.is_valid():
             avatar = Avatar.objects.get(
-                    id=primary_avatar_form.cleaned_data['choice'])
+                id=primary_avatar_form.cleaned_data['choice'])
             avatar.primary = True
             avatar.save()
             updated = True
@@ -290,10 +282,7 @@ class UserDetailView(generic.DetailView):
         user = context['user']
         context['articles'] = Article.published.filter(author=user).order_by('-created')
         action_list = Action.objects.filter(user=user)[:50]
-        if action_list:
-            page_toggle = True
-        else:
-            page_toggle = False
+        page_toggle = toggle_pages(action_list)
         context['page_toggle'] = page_toggle
         paginator = Paginator(action_list, 10)
         page = self.request.GET.get('page')

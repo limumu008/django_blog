@@ -18,17 +18,22 @@ class ArticleCommentForm(forms.ModelForm):
         labels = {
             'content': ''
         }
+        widgets = {
+            'content': forms.TextInput(attrs={
+                'placeholder': '登录后就可以评论了',
+            })
+        }
 
-    def __init__(self, *args, **kwargs):
-        """修改 widget 尺寸"""
-        super().__init__(*args, **kwargs)
-        self.fields['content'].widget.attrs.update({'cols': 80, 'rows': 2})
+    # def __init__(self, *args, **kwargs):
+    #     """修改 widget 尺寸"""
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['content'].widget.attrs.update({'cols': 80, 'rows': 3})
 
 
 class ReplyForm(forms.ModelForm):
     class Meta:
         model = Reply
-        fields = ('comment', 'content',)
+        fields = ('content',)
 
 
 class ArticleForm(forms.ModelForm):

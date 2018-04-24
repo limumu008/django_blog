@@ -4,7 +4,7 @@
 {% block extra_js %}
     <script>
         $(document).ready(function () {
-            $('.circle-avatar').mouseover(function () {
+            $('.circle_avatar').mouseover(function () {
 
             });
         });
@@ -14,8 +14,8 @@
 {% block main %}
     <div class="col-md-4">
         <h1>我的信息</h1>
-        <div id="self-avatar">
-            <a href="{% url 'account:change_avatar' %}">{% avatar user 180 class="circle-avatar" %}</a>
+        <div id="self_avatar">
+            <a href="{% url 'account:change_avatar' %}">{% avatar user 180 class="circle_avatar" %}</a>
             <br>
         </div>
         {% if user.fan0.all %}

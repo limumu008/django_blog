@@ -25,13 +25,19 @@ nav {
 }
 
 .messages {
-    text-align: center;
     padding: 0;
     list-style-type: none;
+    position: fixed;
+    left: 30%;
+    right: 30%;
+    top: 60px;
+    bottom: 0;
 }
 
 .messages .success, .warning, .error, .info {
+    text-align: center;
     margin: 0;
+    width: px;
     padding: 14px 20px;
     list-style: none;
     color: #fff;
@@ -56,7 +62,7 @@ nav {
 }
 
 /* 圆形头像 */
-.circle-avatar {
+.circle_avatar {
     border-radius: 50%;
 }
 

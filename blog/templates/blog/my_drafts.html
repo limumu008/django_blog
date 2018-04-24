@@ -8,10 +8,12 @@
         <h2>我的标签：{{ tag.name }}</h2>
     {% endif %}
 
-    {% for article in my_drafts %}
+    {% for article in articles %}
         {% include 'blog/include/in_article.html' with article=article %}
     {% empty %}
         <p>暂无草稿</p>
     {% endfor %}
-    {% include 'paginator.html' with page=page_obj %}
+    {% if page_toggle %}
+        {% include 'paginator.html' with page=page_obj %}
+    {% endif %}
 {% endblock main %}
