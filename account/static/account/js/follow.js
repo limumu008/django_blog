@@ -1,5 +1,8 @@
 $(document).ready(function () {
     $('#follow_button').click(function () {
+        if (login_status === 'no') {
+            window.location.href = login_url;
+        }
         let now_fans = parseInt($('#total_fans').text());
         $.post(follow_url,
             {
@@ -20,9 +23,6 @@ $(document).ready(function () {
                     }
                     else if (data['action'] === 'self') {
                         alert('不能关注自己');
-                    }
-                    else {
-                        window.location.href = data['url']
                     }
                 }
             });
