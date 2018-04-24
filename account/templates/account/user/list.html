@@ -2,12 +2,14 @@
 
 {% load avatar_tags %}
 
+{% block title %}用户列表{% endblock %}
+
 {% block main %}
-    <div id="people-list">
+    <div id="people_list">
         {% for user in users %}
             <div class="user">
                 <a href="{{ user.get_absolute_url }}">
-                    {% avatar user 180 class='circle-avatar' %}
+                    {% avatar user 180 class='circle_avatar' %}
                 </a>
                 <div class="info">
                     <a href="{{ user.get_absolute_url }}" class="title">

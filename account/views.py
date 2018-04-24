@@ -14,7 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
@@ -27,12 +27,12 @@ from django.views.generic import TemplateView
 from account.forms import (PasswordChangeForm0,
                            RegisterForm,
                            ResetPasswordForm,
-                           UpdateProfileForm,
                            UpdateUserForm)
 from account.models import Contact, Profile
 from actions.models import Action
 from actions.utils import create_action
 from blog.models import Article
+from blog.utils import toggle_pages
 
 User = get_user_model()
 INTERNAL_RESET_URL_TOKEN = 'activate_account'
@@ -45,11 +45,9 @@ def account_profile(request):
     # 用户关注的人
     stars = user.star0.all()
     # star 动作流
-    action_list = Action.objects.filter(user__in=stars)
-    if action_list:
-        page_toggle = True
-    else:
-        page_toggle = False
+    action_list = Action.objects.filter(user__in=stars)[:50]
+    # 分页开关
+    page_toggle = toggle_pages(action_list)
     # 动作流分页
     paginator = Paginator(action_list, 10)
     page = request.GET.get('page')
@@ -175,20 +173,14 @@ def update_user(request, pk):
     user = User.objects.get(pk=pk)
     if request.method == "POST":
         user_form = UpdateUserForm(instance=user, data=request.POST)
-        profile_form = UpdateProfileForm(instance=user.profile,
-                                         data=request.POST,
-                                         files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user_form.save()
-            profile_form.save()
             messages.success(request, "更新成功")
-
+            return redirect(user)
     else:
         user_form = UpdateUserForm(instance=user)
-        profile_form = UpdateProfileForm(instance=user.profile)
     return render(request, 'account/update.html',
-                  {"user_form": user_form,
-                   "profile_form": profile_form})
+                  {"user_form": user_form})
 
 
 class PasswordChangeView0(SuccessMessageMixin, PasswordChangeView):
@@ -227,7 +219,7 @@ def change(request, extra_context=None, next_override=None,
         updated = False
         if 'choice' in request.POST and primary_avatar_form.is_valid():
             avatar = Avatar.objects.get(
-                    id=primary_avatar_form.cleaned_data['choice'])
+                id=primary_avatar_form.cleaned_data['choice'])
             avatar.primary = True
             avatar.save()
             updated = True
@@ -289,11 +281,8 @@ class UserDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         user = context['user']
         context['articles'] = Article.published.filter(author=user).order_by('-created')
-        action_list = Action.objects.filter(user=user)
-        if action_list:
-            page_toggle = True
-        else:
-            page_toggle = False
+        action_list = Action.objects.filter(user=user)[:50]
+        page_toggle = toggle_pages(action_list)
         context['page_toggle'] = page_toggle
         paginator = Paginator(action_list, 10)
         page = self.request.GET.get('page')
@@ -301,28 +290,31 @@ class UserDetailView(generic.DetailView):
         return context
 
 
-@login_required
 def follow_user(request):
     """（取消）关注用户"""
     user_id = int(request.POST.get('user_id'))
     action = str(request.POST.get('action'))
     fan = request.user
     star = get_object_or_404(User, id=user_id)
-    if star.id == fan.id:
-        return JsonResponse({'action': 'self'})
-    if user_id and action:
-        try:
-            if action == '关注':
-                Contact.objects.create(fans=fan,
-                                       star=star)
-                create_action(fan, star, f"{fan.username} 关注了 {star.username}")
-                json = {'action': '取消关注'}
-            else:
-                Contact.objects.filter(fans=fan,
-                                       star=star).delete()
-                create_action(fan, star, f"{fan.username} 取消了关注 {star.username}")
-                json = {'action': '关注'}
-            return JsonResponse(json)
-        except User.DoesNotExist:
-            return JsonResponse({})
-    return JsonResponse({})
+    if request.user.is_anonymous:
+        return JsonResponse({'action': 'redirect',
+                             'url': reverse('login')})
+    else:
+        if star.id == fan.id:
+            return JsonResponse({'action': 'self'})
+        if user_id and action:
+            try:
+                if action == '关注':
+                    Contact.objects.create(fans=fan,
+                                           star=star)
+                    create_action(fan, star, f"{fan.username} 关注了 {star.username}")
+                    json = {'action': '取消关注'}
+                else:
+                    Contact.objects.filter(fans=fan,
+                                           star=star).delete()
+                    create_action(fan, star, f"{fan.username} 取消了关注 {star.username}")
+                    json = {'action': '关注'}
+                return JsonResponse(json)
+            except User.DoesNotExist:
+                return JsonResponse({})
+        return JsonResponse({})

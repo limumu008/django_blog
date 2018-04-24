@@ -1,15 +1,28 @@
 {% extends 'blog/base.html' %}
-{% load static blog_tags avatar_tags %}
+{% load static blog_tags avatar_tags static %}
 
 {% block title %}{{ article.title }}{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/get_crsftoken.js' %}"></script>
+    <script>
+        let like_url = "{% url 'blog:user_like' %}";
+        let reply_url = "{% url 'blog:reply' %}";
+        let login_url = "{% url 'login' %}";
+        let article_id = "{{ article.id }}";
+        let login_status = "{{ user_logined }}";
+    </script>
+    <script src="{% static 'blog/js/like_article.js' %}"></script>
+    <script src="{% static 'blog/js/reply.js' %}"></script>
+    <script src="{% static 'blog/js/toggle_reply.js' %}"></script>
+{% endblock %}
 
 {% block main %}
-    <article class="article">
+    <article>
         {# 显示文章 #}
         <h1>{{ article.title }}</h1>
-        <p class="extra-info">
+        <p class="extra_info">
             <a href="{% url 'account:user_detail' article.author %}">
-                {% avatar article.author 25 class="circle-avatar" %}
+                {% avatar article.author 25 class="circle_avatar" %}
             </a>
             <a href="{% url 'account:user_detail' article.author %}">
                 {{ article.author }}
@@ -18,6 +31,7 @@
             字数 {{ article.content|length }}
             评论数 {% comments_counts article %}
             阅读数 {{ article.read_times }}
+            赞 <span class="liked_count">{% article_likes article %}</span>
         </p>
         {% if author_author %}
             <p>
@@ -34,41 +48,92 @@
         </p>
         <p>{{ article.content|markdown_format }}</p>
 
-        {# 分享文章 #}
-        <p><a href="{% url 'blog:share_article' id=article.id %}">分享文章</a></p>
+        {# 分享文章 点赞 #}
+        <div>
+            <a href="{% url 'blog:share_article' id=article.id %}">分享文章</a>
+            {# 点赞 #}
+            {% if not is_liked %}
+                {# 还没赞 #}
+                <button id="like_article_btn" class="btn btn-success right_btn">
+                    赞
+                </button>
+            {% else %}
+                {# 已经赞了 #}
+                <button id="like_article_btn" class="btn btn-success right_btn">
+                    取消赞
+                </button>
+            {% endif %}
+        </div>
 
         {# 新评论 #}
-        {% if request.user.is_authenticated %}
-            <h2>创建新评论：</h2>
-            <form action="." method="post">
-                {{ comment_form.as_p }}
-                {% csrf_token %}
-                <input type="submit" value="评论">
-            </form>
-        {% endif %}
+        <h2>创建新评论：</h2>
+        <form action="." method="post" id="new_comment">
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <input type="submit" class="btn btn-default" value="评论">
+        </form>
         <br>
-        {# 显示评论 #}
 
+        {# 显示评论 #}
         {% for comment in comments %}
             <div class="comment">
-                <p class="comment-author">
-                    <a href="{% url 'account:user_detail' article.author %}">
-                        {% avatar article.author 25 class="circle-avatar" %}
+                <p class="comment_author">
+                    <a href="{% url 'account:user_detail' comment.author %}">
+                        {% avatar comment.author 25 class="circle_avatar" %}
                     </a>
-                    <a href="{% url 'account:user_detail' article.author %}">
-                        {{ article.author }}
+                    <a href="{% url 'account:user_detail' comment.author %}">
+                        {{ comment.author }}
                     </a>
                     {{ comment.created |date:'y/m/d h:i' }}
                 </p>
-                <p>{{ comment }}</p>
-            </div>
+                <p class="comment_body">{{ comment }}</p>
+
+                {# 新回复 #}
+                <button class="btn btn-default btn-xs reply" value="{{ comment.id }}">回复</button>
+                {% with replies=comment.replies.all %}
+
+                    {# 展示回复的开关 #}
+                    {% if replies %}
+                        <button class="btn btn-info btn-xs toggle_reply_btn right_btn" name="close" value=
+                                "{{ comment.id }}">收起回复
+                        </button>
+                    {% endif %}
+                    </div>
+
+                    {# 回复列表 #}
+                    <div id="replies-{{ comment.id }}" class="replies_list">
+                        {% for reply in replies %}
+                            <div class="replies">
+                                {% with target=reply.reply_target %}
+                                    <p>
+                                        <a href="{% url 'account:user_detail' reply.author %}">
+                                            {{ reply.author }}
+                                        </a>
+                                        {% if target != comment.author %}
+                                            <a href="{% url 'account:user_detail' target %}">
+                                                <span> @ {{ target }}</span>
+                                            </a>
+                                        {% endif %} :{{ reply }}
+                                    </p>
+                                    <p class="extra_info" id="reply-{{ reply.id }}">
+                                        {{ reply.created|date:"y/m/d" }} {{ reply.created|time:"H:i" }}
+                                        <button class="btn btn-default btn-xs re-reply" value="{{ reply.id }}">回复
+                                        </button>
+                                    </p>
+                                {% endwith %}
+                            </div>
+                        {% empty %}
+                        {% endfor %}
+                    </div>
+                {% endwith %}
         {% empty %}
             <p>暂无评论</p>
         {% endfor %}
+        {% if page_toggle %}
+            {% include 'paginator.html' with page=comments %}
+        {% endif %}
     </article>
-
 {% endblock %}
-
 {% block aside %}
     <h2>相似文章</h2>
     <ul>

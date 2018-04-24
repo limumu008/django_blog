@@ -1,14 +1,14 @@
 {% extends 'account/base.html' %}
 
-{% load static avatar_tags account_tags blog_tags humanize %}
+{% load static avatar_tags account_tags blog_tags %}
 
 {% block title %}{{ user.get_username }}{% endblock %}
 
 {% block extra_js %}
     <script src="{% static 'js/get_crsftoken.js' %}"></script>
     <script>
-        var post_url = "{% url 'account:follow_user' %}";
-        var user_id = "{{ user.id }}";
+        let follow_url = "{% url 'account:follow_user' %}";
+        let user_id = "{{ user.id }}";
     </script>
     <script src="{% static 'account/js/follow.js' %}"></script>
 {% endblock %}
@@ -16,13 +16,13 @@
 {% block main %}
     <div class="col-md-6">
         <h1>{{ user.get_username }}</h1>
-        <div class="profile-info">
-            {% avatar user 180 class='circle-avatar float' %}
+        <div class="profile_info">
+            {% avatar user 180 class='circle_avatar float' %}
         </div>
         <span class="count">
-            粉丝数：<span id="total-fans">{% user_fans user %}</span>
+            粉丝数：<span id="total_fans">{% user_fans user %}</span>
         </span>
-        <button id="follow-button"
+        <button class="btn btn-primary" id="follow_button"
                 value="{% if request.user in user.fan0.all %}取消{% endif %}关注">
             {% if request.user not in user.fan0.all %}
                 关注
@@ -43,7 +43,7 @@
         <h2>他的动态</h2>
         {% for action in actions %}
             <ul>
-                <li>{{ action.created|naturaltime }} : {{ action.verb }}</li>
+                <li>{{ action.updated|date:'y/m/d h:i' }} : {{ action.verb }}</li>
             </ul>
         {% empty %}
             <p>他还没有任何动态。</p>

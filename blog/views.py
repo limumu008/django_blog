@@ -1,19 +1,25 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 from django.db.models import Count
+from django.http import JsonResponse, Http404
 from django.shortcuts import (
     get_object_or_404,
     redirect,
     render
 )
 from django.views import generic
+from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
 from actions.utils import create_action
-from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm)
-from .models import Article
+from blog.utils import create_like_article, toggle_pages
+from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm)
+from .models import Article, Likes, Reply, Comment
 
 
 class IndexView(generic.ListView):
@@ -33,6 +39,8 @@ class IndexView(generic.ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        page_toggle = toggle_pages(context['articles'])
+        context['page_toggle'] = page_toggle
         try:
             context['tag'] = self.tag
             return context
@@ -46,7 +54,7 @@ class IndexView(generic.ListView):
 
 class MyArticles(LoginRequiredMixin, IndexView):
     template_name = 'blog/my_articles.html'
-    context_object_name = 'my_articles'
+    context_object_name = 'articles'
 
     def get_queryset(self):
         try:
@@ -61,7 +69,7 @@ class MyArticles(LoginRequiredMixin, IndexView):
 
 class MyDrafts(LoginRequiredMixin, IndexView):
     template_name = 'blog/my_drafts.html'
-    context_object_name = 'my_drafts'
+    context_object_name = 'articles'
 
     def get_queryset(self):
         try:
@@ -89,7 +97,7 @@ def archives(request):
         else:
             month_str = str(year) + '-' + str(month)
         articles = Article.published.filter(
-                publish__startswith=month_str).order_by('-publish')
+            publish__startswith=month_str).order_by('-publish')
         archives.append(articles)
     date_archives = zip(dates, archives)
     context = {'date_archives': date_archives}
@@ -105,10 +113,13 @@ class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     def form_valid(self, form):
         article = form.save(commit=False)
         article.author = self.request.user
-        article.save()
-        create_action(article.author, article,
-                      f"{article.author.username} 发表了文章《{article.title}》")
-        return super().form_valid(form)
+        if article.author.profile.is_author:
+            article.save()
+            create_action(article.author, article,
+                          f"{article.author.username} 发表了文章《{article.title}》")
+            return super().form_valid(form)
+        else:
+            raise Http404("你不是作者，不能发表文章")
 
 
 class UpdateArticle(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
@@ -128,18 +139,29 @@ class UpdateArticle(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView)
 
 def article_detail(request, pk):
     article = get_object_or_404(Article, id=pk)
-    # 添加阅读次数
-    article.add_read_times()
+    # 用户是否登录的变量，用于 js
+    if request.user.is_authenticated:
+        user_logined = 'yes'
+    else:
+        user_logined = 'no'
     # 检索相似
     article_id_list = article.tags.values_list('id', flat=True)
     similar_articles = Article.published.filter(
-            tags__in=article_id_list). \
+        tags__in=article_id_list). \
         exclude(id=article.id)
     similar_articles = similar_articles.annotate(
-            same_tags=Count('tags')).order_by('-same_tags', '-created')[:5]
+        same_tags=Count('tags')).order_by('-same_tags', '-created')[:5]
     # 检索随机
     random_articles = Article.published.order_by('?').exclude(id=article.id)[:5]
-    comments = article.comments.filter(is_show=True)
+    # 检索评论
+    comments_list = article.comments.filter(is_show=True)
+    # 评论分页
+    page_toggle = toggle_pages(comments_list)
+    paginator = Paginator(comments_list, 10)
+    page = request.GET.get('page')
+    comments = paginator.get_page(page)
+    # 添加阅读次数
+    article.add_read_times()
     # 判断是否文章作者，以决定是否显示修改文章按钮。
     article_author = False
     if request.user.is_authenticated:
@@ -148,6 +170,9 @@ def article_detail(request, pk):
             article_author = True
     # 评论
     if request.method == 'POST':
+        if request.user.is_anonymous:
+            # 如未登录重定向到登录
+            return redirect('login')
         comment_form = ArticleCommentForm(request.POST)
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
@@ -157,14 +182,27 @@ def article_detail(request, pk):
             create_action(request.user, article,
                           verb=f"{request.user.username} 评论了文章《{article.title}》")
             messages.success(request, '评论成功')
+            return redirect(article)
     else:
         comment_form = ArticleCommentForm()
+    # 控制赞开关的变量
+    try:
+        content_type = ContentType.objects.get_for_model(article)
+        like = Likes.objects.get(user=request.user,
+                                 content_type=content_type,
+                                 object_id=article.id)
+        is_liked = like.is_liked
+    except (Likes.DoesNotExist, TypeError) as e:
+        is_liked = False
     context = {'article': article,
                'comments': comments,
                'comment_form': comment_form,
                'author_author': article_author,
                'similar_articles': similar_articles,
                'random_articles': random_articles,
+               'is_liked': is_liked,
+               'user_logined': user_logined,
+               'page_toggle': page_toggle,
                }
     return render(request, 'blog/article.html', context)
 
@@ -203,3 +241,64 @@ def retrieve_tags(request):
             if tag not in tags:
                 tags.append(tag)
     return render(request, 'blog/retrieve_tags.html', {'tags': tags})
+
+
+@login_required
+def user_like(request):
+    """用户给文章或评论点赞"""
+    article_id = request.POST.get('article_id')
+    article = get_object_or_404(Article, pk=article_id)
+    # 用户点/取消赞
+    like = create_like_article(request.user, article)
+    is_liked = like.is_liked
+    return JsonResponse({'status': is_liked})
+
+
+@require_POST
+def reply(request):
+    """回复评论"""
+    reply_form = ReplyForm(request.POST)
+    action = request.POST.get('action')
+    # 新回复
+    if reply_form.is_valid():
+        # 使用 content
+        new_reply = reply_form.save(commit=False)
+        # author
+        new_reply.author = request.user
+        if action == 'reply_comment':
+            # 已获得 comment_id
+            new_reply.comment = get_object_or_404(Comment, id=request.POST.get('comment'))
+            new_reply.reply_target = new_reply.comment.author
+            new_reply.save()
+            create_action(user=request.user,
+                          target=new_reply.comment,
+                          verb=f"{request.user.username} 回复了评论 '{new_reply}'")
+            reply_content = \
+                rf"<div class='replies'>" \
+                rf"<p><span class='temp_reply'>{request.user.username}</span> : {new_reply}</p>" \
+                rf"<p class='extra_info'>{new_reply.created:%y/%m/%d %H:%M}</p>" \
+                rf"</div>"
+            return JsonResponse({'status': 'reply_ok',
+                                 'reply_text': reply_content})
+
+        elif action == 'reply_reply':
+            # 未获得 comment，获得 reply
+            print('reply')
+            selected_reply_id = request.POST.get('selected_reply')
+            selected_reply = get_object_or_404(Reply, id=selected_reply_id)
+            new_reply.comment = selected_reply.comment
+            comment_id = new_reply.comment.id
+            new_reply.reply_target = selected_reply.author
+            new_reply.save()
+            create_action(user=request.user,
+                          target=new_reply.reply_target,
+                          verb=f"{request.user.username} 回复了 '{new_reply.reply_target.username}'")
+            reply_content = \
+                rf"<div class='replies'>" \
+                rf"<p><span class='temp_reply'>{request.user.username}</span> @ " \
+                rf"<span class='temp_reply'>{new_reply.reply_target.username}</span> : {new_reply}" \
+                rf"<p class='extra_info'>{new_reply.created:%y/%m/%d %H:%M}</p>" \
+                rf"</div>"
+            return JsonResponse({'status': 'reply_ok',
+                                 'comment_id': comment_id,
+                                 'reply_text': reply_content})

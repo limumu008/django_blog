@@ -8,25 +8,12 @@
         <h2>我的标签：{{ tag.name }}</h2>
     {% endif %}
 
-    {% for article in my_drafts %}
-        <article class="index">
-            <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
-            <p>
-                {% for tag in article.tags.all %}
-                    <a href="{% url 'blog:my_drafts_tags' tag.slug %}">
-                        <span class="tags">{{ tag.name }}</span>
-                    </a>
-                    {% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </p>
-            <p class="extra-info">{{ article.publish|date:"y/m/d" }} {{ article.author }}
-                评论数 {% comments_counts article %}
-                阅读数 {{ article.read_times }}
-            </p>
-            <p class="article">{{ article.content|markdown_format|truncatechars:120 }}</p>
-        </article>
+    {% for article in articles %}
+        {% include 'blog/include/in_article.html' with article=article %}
     {% empty %}
         <p>暂无草稿</p>
     {% endfor %}
-    {% include 'paginator.html' with page=page_obj %}
+    {% if page_toggle %}
+        {% include 'paginator.html' with page=page_obj %}
+    {% endif %}
 {% endblock main %}

@@ -5,7 +5,7 @@ from .models import Profile, User
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'photo', 'is_author']
+    list_display = ['user', 'is_author']
 
 
 admin.site.register(User, UserAdmin)

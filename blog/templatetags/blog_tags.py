@@ -1,8 +1,9 @@
 from django import template
+from django.contrib.contenttypes.models import ContentType
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
-from blog.models import Article
+from blog.models import Article, Likes
 
 register = template.Library()
 
@@ -29,3 +30,17 @@ def draft_counts(user):
 def comments_counts(article):
     """获取文章评论总数"""
     return article.comments.all().count()
+
+
+@register.simple_tag(name='article_likes')
+def article_likes(article):
+    """获取文章赞数"""
+    try:
+        content_type = ContentType.objects.get_for_model(article)
+        likes = Likes.objects.filter(content_type=content_type,
+                                     object_id=article.id,
+                                     is_liked=True
+                                     ).count()
+        return likes
+    except Exception:
+        return 0
