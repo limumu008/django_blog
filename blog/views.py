@@ -283,7 +283,6 @@ def reply(request):
 
         elif action == 'reply_reply':
             # 未获得 comment，获得 reply
-            print('reply')
             selected_reply_id = request.POST.get('selected_reply')
             selected_reply = get_object_or_404(Reply, id=selected_reply_id)
             new_reply.comment = selected_reply.comment
