@@ -287,6 +287,12 @@ class UserDetailView(generic.DetailView):
         paginator = Paginator(action_list, 10)
         page = self.request.GET.get('page')
         context['actions'] = paginator.get_page(page)
+        # 用户是否登录的变量，用于 js
+        if self.request.user.is_authenticated:
+            user_logined = 'yes'
+        else:
+            user_logined = 'no'
+        context['user_logined'] = user_logined
         return context
 
 
