@@ -2,6 +2,13 @@
 {% load static blog_tags avatar_tags %}
 {% block title %}博客首页{% endblock title %}
 
+{% block extra_form %}
+    <form class="navbar-form">
+        <input type="text" class="form-control" name="keyword">
+        <button class="btn btn-default btn-sm">搜索</button>
+    </form>
+{% endblock %}
+
 {% block main %}
 
     {% if tag %}

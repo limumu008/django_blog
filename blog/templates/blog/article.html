@@ -11,7 +11,7 @@
         let article_id = "{{ article.id }}";
         let login_status = "{{ user_logined }}";
     </script>
-    <script src="{% static 'blog/js/like_article.js' %}"></script>
+    <script src="{% static 'blog/js/likes.js' %}"></script>
     <script src="{% static 'blog/js/reply.js' %}"></script>
     <script src="{% static 'blog/js/toggle_reply.js' %}"></script>
 {% endblock %}
@@ -28,12 +28,13 @@
                 {{ article.author }}
             </a>
             {{ article.publish|date:"y/m/d" }}
-            字数 {{ article.content|length }}
-            评论数 {% comments_counts article %}
-            阅读数 {{ article.read_times }}
-            赞 <span class="liked_count">{% article_likes article %}</span>
+            <span class="glyphicon glyphicon-comment" aria-hidden="true">{% comments_counts article %} </span>
+            <span class="glyphicon glyphicon-eye-open" aria-hidden="true">{{ article.read_times }} </span>
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"><span
+                    id="article_like_count">{% count_likes article %}</span></span>
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true">{{ article.content|length }}</span>
         </p>
-        {% if author_author %}
+        {% if article_author %}
             <p>
                 <a href="{% url 'blog:update_article' article.id %}">修改文章</a>
             </p>
@@ -52,17 +53,14 @@
         <div>
             <a href="{% url 'blog:share_article' id=article.id %}">分享文章</a>
             {# 点赞 #}
-            {% if not is_liked %}
-                {# 还没赞 #}
-                <button id="like_article_btn" class="btn btn-success right_btn">
-                    赞
-                </button>
+            <button {% if article|is_liked:request.user %}
+                class="btn btn-default right_btn already_like"
             {% else %}
-                {# 已经赞了 #}
-                <button id="like_article_btn" class="btn btn-success right_btn">
-                    取消赞
-                </button>
+                class="btn btn-default right_btn"
             {% endif %}
+                id="like_article_btn" value="{{ article.id }}">
+                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+            </button>
         </div>
 
         {# 新评论 #}
@@ -89,7 +87,20 @@
                 <p class="comment_body">{{ comment }}</p>
 
                 {# 新回复 #}
-                <button class="btn btn-default btn-xs reply" value="{{ comment.id }}">回复</button>
+                <div class="btn_up">
+                    <button class="btn btn-default btn-xs reply" value="{{ comment.id }}">回复</button>
+                    {# 点赞评论 #}
+                    <button
+                            {% if comment|is_liked:request.user %}
+                                class="like_comment_btn btn btn-default btn-xs already_like"
+                            {% else %}
+                                class="like_comment_btn btn btn-default btn-xs"
+                            {% endif %}
+                                id="like_c_btn_{{ comment.id }}" value="{{ comment.id }}">
+                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                    </button>
+                    <span id="like_comment_count_{{ comment.id }}">{% count_likes comment %}</span>
+                </div>
                 {% with replies=comment.replies.all %}
 
                     {# 展示回复的开关 #}
@@ -117,8 +128,20 @@
                                     </p>
                                     <p class="extra_info" id="reply-{{ reply.id }}">
                                         {{ reply.created|date:"y/m/d" }} {{ reply.created|time:"H:i" }}
+                                        {# 回复回复 #}
                                         <button class="btn btn-default btn-xs re-reply" value="{{ reply.id }}">回复
                                         </button>
+                                        {# 点赞回复 #}
+                                        <button {% if reply|is_liked:request.user %}
+                                            class="like_reply_btn btn btn-default btn-xs already_like"
+                                        {% else %}
+                                            class="like_reply_btn btn btn-default btn-xs"
+                                        {% endif %}
+                                            id="like_r_btn_{{ reply.id }}" value="{{ reply.id }}">
+                                            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                                        </button>
+                                        {# 点赞数 #}
+                                        <span id="like_reply_count_{{ reply.id }}">{% count_likes reply %}</span>
                                     </p>
                                 {% endwith %}
                             </div>
@@ -139,7 +162,7 @@
     <ul>
         {% for article0 in similar_articles %}
             <li>
-                <a href="{{ article0.get_absolute_url }}">{{ article0.title }}</a>
+                <a href="{{ article0.get_absolute_url }}">《{{ article0.title }}》</a>
             </li>
         {% endfor %}
     </ul>
@@ -147,7 +170,7 @@
     <ul>
         {% for article0 in random_articles %}
             <li>
-                <a href="{{ article0.get_absolute_url }}">{{ article0.title }}</a>
+                <a href="{{ article0.get_absolute_url }}">《{{ article0.title }}》</a>
             </li>
         {% endfor %}
     </ul>

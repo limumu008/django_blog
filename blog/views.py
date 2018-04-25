@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
@@ -17,9 +16,9 @@ from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
 from actions.utils import create_action
-from blog.utils import create_like_article, toggle_pages
+from blog.utils import toggle_pages, create_like
 from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm)
-from .models import Article, Likes, Reply, Comment
+from .models import Article, Reply, Comment
 
 
 class IndexView(generic.ListView):
@@ -185,22 +184,12 @@ def article_detail(request, pk):
             return redirect(article)
     else:
         comment_form = ArticleCommentForm()
-    # 控制赞开关的变量
-    try:
-        content_type = ContentType.objects.get_for_model(article)
-        like = Likes.objects.get(user=request.user,
-                                 content_type=content_type,
-                                 object_id=article.id)
-        is_liked = like.is_liked
-    except (Likes.DoesNotExist, TypeError) as e:
-        is_liked = False
     context = {'article': article,
                'comments': comments,
                'comment_form': comment_form,
-               'author_author': article_author,
+               'article_author': article_author,
                'similar_articles': similar_articles,
                'random_articles': random_articles,
-               'is_liked': is_liked,
                'user_logined': user_logined,
                'page_toggle': page_toggle,
                }
@@ -245,11 +234,20 @@ def retrieve_tags(request):
 
 @login_required
 def user_like(request):
-    """用户给文章或评论点赞"""
-    article_id = request.POST.get('article_id')
-    article = get_object_or_404(Article, pk=article_id)
-    # 用户点/取消赞
-    like = create_like_article(request.user, article)
+    """用户给文章/评论/回复点赞"""
+    if request.POST.get('target') == 'article':
+        article_id = request.POST.get('article_id')
+        target = get_object_or_404(Article, pk=article_id)
+        # 用户点/取消赞
+    elif request.POST.get('target') == 'comment':
+        comment_id = request.POST.get('comment_id')
+        target = get_object_or_404(Comment, pk=comment_id)
+        # 用户点/取消赞
+    elif request.POST.get('target') == 'reply':
+        reply_id = request.POST.get('reply_id')
+        target = get_object_or_404(Reply, pk=reply_id)
+        # 用户点/取消赞
+    like = create_like(request.user, target)
     is_liked = like.is_liked
     return JsonResponse({'status': is_liked})
 

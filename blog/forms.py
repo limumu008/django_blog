@@ -21,6 +21,7 @@ class ArticleCommentForm(forms.ModelForm):
         widgets = {
             'content': forms.TextInput(attrs={
                 'placeholder': '登录后就可以评论了',
+                'class': 'form-control',
             })
         }
 

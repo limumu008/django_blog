@@ -50,6 +50,7 @@
                     <li><a href="{% url 'account:user_list' %}">用户</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    <li>{% block extra_form %}{% endblock %}</li>
                     {% if request.user.profile.is_author %}
                         <li><a href="{% url 'blog:new_article' %}">写文章</a></li>
                     {% endif %}

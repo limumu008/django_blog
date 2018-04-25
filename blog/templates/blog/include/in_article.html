@@ -1,4 +1,5 @@
-{% load avatar_tags blog_tags %}
+{% load avatar_tags blog_tags static %}
+
 <article class="index">
     <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
     <p>
@@ -16,10 +17,14 @@
         <a href="{% url 'account:user_detail' article.author %}">
             {{ article.author }}
         </a>
+        <span class="display_info">
         {{ article.publish|date:"y/m/d" }}
-        评论数 {% comments_counts article %}
-        赞 <span class="liked-count">{% article_likes article %}</span>
-        阅读数 {{ article.read_times }}
+            <span class="glyphicon glyphicon-comment" aria-hidden="true">{% comments_counts article %} </span>
+            <span class="glyphicon glyphicon-eye-open" aria-hidden="true">{{ article.read_times }} </span>
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"><span
+                    id="article_like_count">{% count_likes article %}</span></span>
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true">{{ article.content|length }}</span>
+        </span>
     </p>
     <p>{{ article.content|markdown_format|truncatechars:120 }}</p>
 </article>
