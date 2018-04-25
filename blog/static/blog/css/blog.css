@@ -95,6 +95,14 @@ button.reply {
     color: red;
 }
 
-.extra_info .glyphicon {
+.like_reply_btn {
+    margin-left: 10px;
+}
+
+.tag {
+    margin: 5px;
+}
+
+.dis {
     margin-left: 10px;
 }

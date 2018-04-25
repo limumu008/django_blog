@@ -5,7 +5,7 @@
 {% block main %}
     <h2>全部标签</h2>
     {% for tag in tags %}
-        <div>
+        <div class="tag">
             <a class="btn btn-info" href="{% url 'blog:tag_index' tag.slug %}">
                 <span class="index_tags">{{ tag.name }}</span>
             </a>

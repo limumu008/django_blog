@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'haystack',
     'django.forms',
     'blog.apps.BlogConfig',
     'taggit',
@@ -149,6 +150,16 @@ X_FRAME_OPTIONS = 'DENY'
 MARKDOWNX_MARKDOWN_EXTENSIONS = ['markdown.extensions.extra',
                                  'markdown.extensions.codehilite',
                                  'markdown.extensions.toc']
+
+# search:haystack
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.join(BASE_DIR, 'whoosh_index')),
+    },
+}
+# 每页结果
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 
 LOGGING = {
     'version': 1,

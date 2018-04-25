@@ -27,6 +27,7 @@ urlpatterns = [
                   path('blog/', include('blog.urls')),
                   path('admin/', admin.site.urls),
                   path(r'markdownx/', include('markdownx.urls')),
+                  path(r'search/', include('haystack.urls')),
                   path(r'avatar/', include('avatar.urls'), )] \
               + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
               + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
