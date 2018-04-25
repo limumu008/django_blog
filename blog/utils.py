@@ -1,30 +1,59 @@
 from django.contrib.contenttypes.models import ContentType
 
 from actions.utils import create_action
-from .models import Likes
+from .models import Likes, Article, Comment, Reply
 
 
-def create_like_article(user, article):
-    """创建并保存 点赞文章 like 实例的快捷函数"""
+def create_like(user, target):
+    """创建并保存 点赞 article/comment/reply like 的快捷函数"""
     try:
-        # 尝试获取赞对象
-        content_type = ContentType.objects.get_for_model(article)
+        # 尝试获取赞的目标对象
+        content_type = ContentType.objects.get_for_model(target)
         like = Likes.objects.get(user=user,
                                  content_type=content_type,
-                                 object_id=article.id)
+                                 object_id=target.id)
         like.is_liked = not like.is_liked
-        if like.is_liked:
-            create_action(user, article,
-                          verb=f"{user.username} 赞了文章《{article.title}》")
-        else:
-            create_action(user, article,
-                          verb=f"{user.username} 取消了文章《{article.title}》的赞")
+        # target is article
+        if isinstance(target, Article):
+            if like.is_liked:
+                create_action(user, target,
+                              verb=f"{user.username} 赞了文章《{target.title}》")
+            else:
+                create_action(user, target,
+                              verb=f"{user.username} 取消了文章《{target.title}》的赞")
+
+        # target is comment
+        elif isinstance(target, Comment):
+            if like.is_liked:
+                create_action(user, target,
+                              verb=f"{user.username} 赞了评论:{target.content[:20]}")
+            else:
+                create_action(user, target,
+                              verb=f"{user.username} 取消了评论:{target.content[:20]}的赞")
+        # target is reply
+        elif isinstance(target, Reply):
+            if like.is_liked:
+                create_action(user, target,
+                              verb=f"{user.username} 赞了回复:{target.content[:20]}")
+            else:
+                create_action(user, target,
+                              verb=f"{user.username} 取消了回复:{target.content[:20]}的赞")
         like.save()
     except Likes.DoesNotExist as e:
-        like = Likes(user=user, likes_target=article)
+        like = Likes(user=user, likes_target=target)
         like.save()
-        create_action(user, article,
-                      verb=f"{user.username}赞了文章《{article.title}》")
+        # target is article
+        if isinstance(target, Article):
+            create_action(user, target,
+                          verb=f"{user.username}赞了文章《{target.title}》")
+        # target is comment
+        elif isinstance(target, Comment):
+            create_action(user, target,
+                          verb=f"{user.username}赞了评论:{target.content[:20]}")
+        # target is reply
+        elif isinstance(target, Reply):
+            create_action(user, target,
+                          verb=f"{user.username}赞了回复:{target.content[:20]}")
     return like
 
 

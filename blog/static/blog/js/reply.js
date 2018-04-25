@@ -6,7 +6,7 @@ $(document).ready(function () {
             }
             let reply_commend_id = $(this).val();
             $(this).before(`<form action="${reply_url}" method="post" class="reply_comment">` +
-                `<textarea name="content" rows="2" class="input_reply" placeholder="输入回复内容"></textarea>`
+                `<textarea name="content" rows="2" class="input_reply form-control" placeholder="输入回复内容"></textarea>`
                 + `<input type="number" hidden="hidden" name="comment" value="${reply_commend_id}">`
                 + `<input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">`
                 + `<input type="submit" class="btn btn-default btn-xs"  value="回复">`
@@ -22,7 +22,7 @@ $(document).ready(function () {
         }
         let reply_id = $(this).val();
         $('#reply-' + reply_id).after(`<form action="${reply_url}" method="post" class="reply_reply">` +
-            `<textarea name="content" rows="2" class="input_reply" placeholder="输入回复内容"></textarea>`
+            `<textarea name="content" rows="2" class="input_reply form-control" placeholder="输入回复内容"></textarea>`
             + `<input type="number" hidden="hidden" name="reply" value="${reply_id}">`
             + `<input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">`
             + `<input type="submit" class="btn btn-default btn-xs" value="回复">`
