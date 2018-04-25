@@ -13,7 +13,7 @@
 
 {% block main %}
     <div class="col-md-4">
-        <h1>我的信息</h1>
+        <h1>{{ user }}的信息</h1>
         <div id="self_avatar">
             <a href="{% url 'account:change_avatar' %}">{% avatar user 180 class="circle_avatar" %}</a>
             <br>
@@ -32,9 +32,11 @@
         {% else %}
             <span class="count">关注的人：{% user_stars user %}</span>
         {% endif %}
-
+        <div>
+            <p id="tip1">小提示：点击头像即可更换默认头像~</p>
+        </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
         <h2>动态</h2>
         {% for action in actions %}
             <ul>
@@ -47,8 +49,8 @@
             {% include 'paginator.html' with page=actions %}
         {% endif %}
     </div>
-    <div class="col-md-2">
-        <h2>我的博客</h2>
+    <div class="col-md-3">
+        <h2>{{ user }}的博客</h2>
         {% if request.user.is_authenticated %}
             <p>我已经写了{% article_counts request.user %}篇文章</p>
             <p><a href="{% url 'blog:my_articles' %}">我的文章</a></p>
