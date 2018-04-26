@@ -16,6 +16,7 @@ from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
 from actions.utils import create_action
+from blog.search_indexes import ArticleIndex
 from blog.utils import toggle_pages, create_like
 from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm)
 from .models import Article, Reply, Comment
@@ -114,6 +115,9 @@ class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
         article.author = self.request.user
         if article.author.profile.is_author:
             article.save()
+            # 重建索引
+            article_index = ArticleIndex()
+            article_index.reindex()
             create_action(article.author, article,
                           f"{article.author.username} 发表了文章《{article.title}》")
             return super().form_valid(form)
@@ -153,7 +157,8 @@ def article_detail(request, pk):
     # 检索随机
     random_articles = Article.published.order_by('?').exclude(id=article.id)[:5]
     # 检索评论
-    comments_list = article.comments.filter(is_show=True)
+    comments_list = article.comments.filter(is_show=True).select_related('author'). \
+        prefetch_related('replies__author', 'replies__reply_target')
     # 评论分页
     page_toggle = toggle_pages(comments_list)
     paginator = Paginator(comments_list, 10)
