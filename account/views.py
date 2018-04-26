@@ -45,7 +45,7 @@ def account_profile(request):
     # 用户关注的人
     stars = user.star0.all()
     # star 动作流
-    action_list = Action.objects.filter(user__in=stars)[:50]
+    action_list = Action.objects.filter(user__in=stars)[:50].select_related('user')
     # 分页开关
     page_toggle = toggle_pages(action_list)
     # 动作流分页
@@ -281,7 +281,7 @@ class UserDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         user = context['user']
         context['articles'] = Article.published.filter(author=user).order_by('-created')
-        action_list = Action.objects.filter(user=user)[:50]
+        action_list = Action.objects.filter(user=user)[:50].select_related('user')
         page_toggle = toggle_pages(action_list)
         context['page_toggle'] = page_toggle
         paginator = Paginator(action_list, 10)

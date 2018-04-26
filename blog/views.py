@@ -157,7 +157,8 @@ def article_detail(request, pk):
     # 检索随机
     random_articles = Article.published.order_by('?').exclude(id=article.id)[:5]
     # 检索评论
-    comments_list = article.comments.filter(is_show=True)
+    comments_list = article.comments.filter(is_show=True).select_related('author'). \
+        prefetch_related('replies__author', 'replies__reply_target')
     # 评论分页
     page_toggle = toggle_pages(comments_list)
     paginator = Paginator(comments_list, 10)
