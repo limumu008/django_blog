@@ -16,6 +16,7 @@ from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
 from actions.utils import create_action
+from blog.search_indexes import ArticleIndex
 from blog.utils import toggle_pages, create_like
 from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm)
 from .models import Article, Reply, Comment
@@ -114,6 +115,9 @@ class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
         article.author = self.request.user
         if article.author.profile.is_author:
             article.save()
+            # 重建索引
+            article_index = ArticleIndex()
+            article_index.reindex()
             create_action(article.author, article,
                           f"{article.author.username} 发表了文章《{article.title}》")
             return super().form_valid(form)
