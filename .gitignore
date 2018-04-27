@@ -111,4 +111,5 @@ media/
 account/migrations/
 blog/migrations/
 actions/migrations/
+shop/migrations/
 Pipfile
