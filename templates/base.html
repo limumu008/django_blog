@@ -38,9 +38,8 @@
     </div>
 {% endif %}
 
-
-<nav class="navbar navbar-default navbar-fixed-top ">
-    {% block header %}
+{% block header %}
+    <nav class="navbar navbar-default navbar-fixed-top ">
         <div class="container">
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -74,8 +73,9 @@
                 </ul>
             </div>
         </div>
-    {% endblock %}
-</nav>
+    </nav>
+{% endblock %}
+
 
 
 <section>{% block section %}{% endblock %}</section>

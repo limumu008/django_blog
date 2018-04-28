@@ -22,6 +22,11 @@ from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm
 from .models import Article, Reply, Comment
 
 
+def site_index(request):
+    """网站首页"""
+    return render(request, 'index.html')
+
+
 class IndexView(generic.ListView):
     """文章展示页"""
     template_name = 'blog/index.html'

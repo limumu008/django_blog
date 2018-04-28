@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'shop/css/shop.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block section %}
+    <div id="header"></div>
+    <div id="subheader">
+        <div class="cart">
+            your car is empty.
+        </div>
+    </div>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}
