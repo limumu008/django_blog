@@ -1,8 +1,6 @@
 $(document).ready(function () {
     $('#follow_button').click(function () {
-        if (login_status === 'no') {
-            window.location.href = login_url;
-        }
+        ``
         let now_fans = parseInt($('#total_fans').text());
         $.post(follow_url,
             {

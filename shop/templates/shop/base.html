@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block extra_js %}
 
+{% endblock %}
 {% block extra_css %}
+    <link href="{% static 'css/jquery.growl.css' %}" rel="stylesheet">
     <link href="{% static 'shop/css/shop.css' %}" rel="stylesheet">
 {% endblock %}
 
-{% block header %}
-
-{% endblock %}
+{% block header %} {% endblock %}
 
 {% block section %}
     <div id="header"></div>

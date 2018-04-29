@@ -4,7 +4,7 @@ from . import views
 
 app_name = 'account'
 urlpatterns = [
-    path(r'profile/', views.account_profile, name='profile'),
+    path(r'', views.account_profile, name='profile'),
     path(r'register/', views.RegisterView.as_view(), name='register'),
     path(r'activate/<uidb64>/<token>/', views.ActivateView.as_view(), name='activate'),
     path(r'update/<int:pk>/', views.update_user, name='update_user'),

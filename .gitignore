@@ -113,4 +113,5 @@ account/migrations/
 blog/migrations/
 actions/migrations/
 shop/migrations/
+cart/migrations/
 Pipfile

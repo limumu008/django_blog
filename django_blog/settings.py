@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'avatar',
     'actions.apps.ActionsConfig',
     'shop.apps.ShopConfig',
+    'cart.apps.CartConfig',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +162,6 @@ HAYSTACK_CONNECTIONS = {
 }
 # 每页结果
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+
+# session
+CART_SESSION_ID = 'cart'

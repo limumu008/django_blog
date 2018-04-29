@@ -74,6 +74,7 @@ class Reply(models.Model):
 
     class Meta:
         ordering = ('created',)
+        verbose_name_plural = 'replies'
 
     def __str__(self):
         return self.content
