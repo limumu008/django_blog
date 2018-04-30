@@ -10,7 +10,7 @@
         let follow_url = "{% url 'account:follow_user' %}";
         let user_id = "{{ user.id }}";
         let login_url = "{% url 'login' %}";
-        let login_status = "{{ user_logined }}";
+        let login_status = "{{ login_status }}";
     </script>
     <script src="{% static 'account/js/follow.js' %}"></script>
 {% endblock %}

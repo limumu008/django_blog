@@ -19,4 +19,4 @@ class Action(models.Model):
     target = GenericForeignKey()
 
     class Meta:
-        ordering = ('-created',)
+        ordering = ('-updated',)
