@@ -1,6 +1,11 @@
 {% extends 'cart/base.html' %}
-{% load static %}
+{% load static thumbnail %}
 {% block title %}购物车{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/get_crsftoken.js' %}"></script>
+    <script>change_cart_url = "{% url 'cart:change_cart' %}";</script>
+    <script src="{% static 'cart/js/rm_product.js' %}"></script>
+{% endblock %}
 
 {# todo #}
 {% block section %}
@@ -12,29 +17,39 @@
                 <table class="cart">
                     <thead>
                     <tr>
-                        <th>Image</th>
-                        <th>Product</th>
-                        <th>Quantity</th>
+                        <th></th>
+                        <th>商品</th>
+                        <th>数量</th>
                         <th>Remove</th>
-                        <th>Unit price</th>
-                        <th>Price</th>
+                        <th>单价</th>
+                        <th>小计</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for item in cart %}
                         {% with product=item.product %}
-                            <tr>
+                            <tr id="tr-{{ product.id }}">
                                 <td>
                                     <a href="{{ product.get_absolute_url }}">
-                                        <img src="{% if product.image %}{{ product.image.url }}
+                                        <img src="{% if product.image %}
+{{ product.image|thumbnail_url:'product_in_cart' }}
                                 {% else %}{% static "shop/img/no_image.png" %}{% endif %}">
                                     </a>
                                 </td>
                                 <td>{{ product.name }}</td>
-                                <td>{{ item.quantity }}</td>
                                 <td>
-                                    {# todo #}
-                                    <button class="btn btn-danger remove-btn">移除</button>
+                                    <form action="{% url 'cart:change_cart' %}" method="post">
+                                        <input type="number" value="{{ item.quantity }}"
+                                               min="1" max="99" name="quantity">
+                                        <input type="hidden" value="{{ product.id }}" name="product_id">
+                                        {% csrf_token %}
+                                        <input type="submit" class="btn btn-danger" value="修改">
+                                    </form>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger remove-btn" value="{{ product.id }}">
+                                        移除
+                                    </button>
                                 </td>
                                 <td class="num">￥{{ item.price }}</td>
                                 <td class="num">￥{{ item.total_price }}</td>
@@ -42,9 +57,9 @@
                         {% endwith %}
                     {% endfor %}
                     <tr class="total">
-                        <td>Total</td>
+                        <td>合计</td>
                         <td colspan="4"></td>
-                        <td class="num">￥{{ cart.get_total_price }}</td>
+                        <td class="num">￥<span id="total-price">{{ cart.get_total_price }}</span></td>
                     </tr>
                     </tbody>
                 </table>

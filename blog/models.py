@@ -92,5 +92,8 @@ class Likes(models.Model):
     object_id = models.PositiveIntegerField()
     likes_target = GenericForeignKey()
 
+    class Meta:
+        verbose_name_plural = 'likes'
+
     def __str__(self):
         return f"{self.user.username}赞了{self.likes_target}"

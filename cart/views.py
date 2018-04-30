@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_POST
 
 from cart.cart import Cart
@@ -14,15 +14,22 @@ def change_cart(request):
     """
     cart = Cart(request)
     product = get_object_or_404(Product, id=request.POST.get('product_id'))
+    # 添加 product 到 cart
     if request.POST.get('action') == 'add_product':
         cart.add(product)
         return JsonResponse({'status': 'add_success'})
-    elif request.POST.get('action') == 'reduce_product':
-        cart.reduce(product)
+    # remove cart 中的 product
     elif request.POST.get('action') == 'remove_product':
+        this_price = product.price * int(cart[request.POST.get('product_id')]['quantity'])
         cart.remove(product)
+        return JsonResponse({'status': 'rm_success', 'this_price': this_price})
     elif request.POST.get('action') == 'clear_cart':
         cart.clear()
+    # 修改 cart 中 product 数量
+    else:
+        quantity = int(request.POST.get('quantity'))
+        cart.change(product, quantity)
+        return redirect('cart:cart_detail')
 
 
 def cart_detail(request):

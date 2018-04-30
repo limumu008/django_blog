@@ -5,7 +5,7 @@ $(document).ready(function () {
                 window.location.href = login_url;
             }
             let reply_commend_id = $(this).val();
-            $(this).before(`<form action="${reply_url}" method="post" class="reply_comment">` +
+            $('#like_c_btn_' + reply_commend_id).after(`<form action="${reply_url}" method="post" class="reply_comment">` +
                 `<textarea name="content" rows="2" class="input_reply form-control" placeholder="输入回复内容"></textarea>`
                 + `<input type="number" hidden="hidden" name="comment" value="${reply_commend_id}">`
                 + `<input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">`
@@ -13,6 +13,7 @@ $(document).ready(function () {
                 + `</form>`
             );
             $(this).hide();
+            // $('#like_c_btn_' + reply_commend_id).hide();
         }
     );
     $('.re-reply').click(function () {

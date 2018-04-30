@@ -11,6 +11,9 @@ class Cart:
         # 这里拿到了 sessions 中的 cart，不存在就设为 {}
         self.cart = self.session.setdefault(settings.CART_SESSION_ID, {})
 
+    def __str__(self):
+        return str(self.cart)
+
     def add(self, product, quantity=1):
         """
         添加 product 到 cart,已存在则+1
@@ -23,11 +26,11 @@ class Cart:
         self.cart[product_id]['quantity'] += quantity
         self.save()
 
-    def reduce(self, product):
-        """产品数量>=2则-1"""
+    def change(self, product, quantity):
+        """修改 cart 中 product 的 quantity"""
         product_id = str(product.id)
-        if self.cart[product_id]['quantity'] >= 2:
-            self.cart[product_id]['quantity'] -= 1
+        self.cart[product_id]['quantity'] = quantity
+        self.save()
 
     def remove(self, product):
         """remove a product form cart"""
@@ -65,6 +68,9 @@ class Cart:
     def __len__(self):
         """cal all products in cart"""
         return sum(item['quantity'] for item in self.cart.values())
+
+    def __getitem__(self, item):
+        return self.cart[item]
 
     def get_total_price(self):
         return sum(item['total_price'] for item in self.cart.values())
