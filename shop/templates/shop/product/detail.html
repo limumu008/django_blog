@@ -4,38 +4,24 @@
 {% block title %}
     {% if category %}{{ category.title }}{% else %}Products{% endif %}
 {% endblock %}
-{% block extra_js %}
+{% block extra_shop_js %}
     <script src="{% static 'js/jquery.growl.js' %}"></script>
     <script src="{% static 'js/get_crsftoken.js' %}"></script>
     <script>
-        change_cart_url = "{% url 'cart:change_cart' %}";
+        const change_cart_url = "{% url 'cart:change_cart' %}";
+        const is_logined = "{{ is_logined }}" === 'True';
     </script>
-    <script>
-        $(document).ready(function () {
-            $('#to-cart').click(function () {
-                let product_id = $(this).val();
-                $.post(change_cart_url, {
-                        action: 'add_product',
-                        product_id: product_id
-                    }, function (data) {
-                        if (data['status'] === 'add_success') {
-                            $.growl({title: '提示', message: '已加入购物车', duration: 1000});
-                        }
-                    }
-                );
-            });
-        });
-    </script>
+    <script src="{% static 'shop/js/add_to_cart.js' %}"></script>
 {% endblock %}
 
 {% block content %}
     <div class="product-detail">
         <img src="{% if product.image %}{{ product.image.url }}
-                                {% else %}{% static "shop/img/no_image.png" %}{% endif %}">
+                                        {% else %}{% static "shop/img/no_image.png" %}{% endif %}">
+        <div></div>
         <h1>{{ product.name }}</h1>
         <h2><a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a></h2>
         <p class="price">￥{{ product.price }}</p>
-        {# todo #}
         <button class="btn btn-danger" id="to-cart" value="{{ product.id }}">加入购物车</button>
         {{ product.description|linebreaks }}
     </div>

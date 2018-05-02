@@ -25,7 +25,7 @@ def change_cart(request):
         return JsonResponse({'status': 'rm_success', 'this_price': this_price})
     elif request.POST.get('action') == 'clear_cart':
         cart.clear()
-    # 修改 cart 中 product 数量
+    # 修改 cart 中 product 数量 --not ajax
     else:
         quantity = int(request.POST.get('quantity'))
         cart.change(product, quantity)

@@ -39,3 +39,12 @@ class ProductDetailView(generic.DetailView):
             return self.render_to_response(context)
         else:
             raise Http404('The product is not sold')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            is_logined = True
+        else:
+            is_logined = False
+        context['is_logined'] = is_logined
+        return context

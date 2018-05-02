@@ -1,6 +1,4 @@
 body {
-    margin: 0;
-    padding: 0;
     font-family: helvetica, sans-serif;
 }
 
@@ -112,32 +110,6 @@ ul.errorlist {
     font-size: 13px;
     margin: 0;
     padding: 0;
-}
-
-#header {
-    padding: 10px 100px;
-    font-size: 18px;
-    overflow: auto;
-}
-
-#subheader {
-    background: #ececec;
-    color: #444;
-    padding: 15px 100px;
-    overflow: auto;
-}
-
-#header .logo {
-    font-family: 'Ubuntu', sans-serif;
-    float: left;
-    color: #333;
-    font-size: 22px;
-    margin-right: 10%;
-}
-
-#subheader .cart {
-    float: right;
-    padding-top: 4px;
 }
 
 #content {
@@ -311,4 +283,9 @@ ul.errorlist {
 
 .recommendations.cart img {
     width: 120px;
+}
+
+.cart-btn {
+    border: solid;
+    padding: 0;
 }

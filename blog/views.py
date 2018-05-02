@@ -22,11 +22,6 @@ from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm
 from .models import Article, Reply, Comment
 
 
-def site_index(request):
-    """网站首页"""
-    return render(request, 'index.html')
-
-
 class IndexView(generic.ListView):
     """文章展示页"""
     template_name = 'blog/index.html'
@@ -149,9 +144,9 @@ def article_detail(request, pk):
     article = get_object_or_404(Article, id=pk)
     # 用户是否登录的变量，用于 js
     if request.user.is_authenticated:
-        user_logined = 'yes'
+        user_logined = True
     else:
-        user_logined = 'no'
+        user_logined = False
     # 检索相似
     article_id_list = article.tags.values_list('id', flat=True)
     similar_articles = Article.published.filter(
@@ -259,7 +254,7 @@ def user_like(request):
         # 用户点/取消赞
     like = create_like(request.user, target)
     is_liked = like.is_liked
-    return JsonResponse({'status': is_liked})
+    return JsonResponse({'is_liked': is_liked})
 
 
 @require_POST

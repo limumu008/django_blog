@@ -1,19 +1,68 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static avatar_tags %}
 {% block extra_css %}
     <link href="{% static 'css/jquery.growl.css' %}" rel="stylesheet">
     <link href="{% static 'shop/css/shop.css' %}" rel="stylesheet">
 {% endblock %}
+{% block extra_js %}
+    <script>
+        const login_url = "{% url 'login' %}";
+    </script>
+    {% block extra_shop_js %} {% endblock %}
+{% endblock %}
 
-{% block header %} {% endblock %}
+{% block header %}
+    <nav class="navbar navbar-default navbar-fixed-top ">
+        <div class="container">
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a class="navbar-brand" href="{% url 'index' %}">首页</a></li>
+                    <li><a href="{% url 'shop:product_list' %}">商城</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>{% block extra_form %}{% endblock %}</li>
+                    <li>
+                        {% if user.is_authenticated %}
+                            {% if cart|length > 0 %}
+                                <a href="{% url 'cart:cart_detail' %}">
+                                    购物车：<span id="cart-product-count">{{ cart|length }}</span>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'cart:cart_detail' %}">
+                                    购物车：0
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}">
+                                购物车：0
+                            </a>
+                        {% endif %}
+                    </li>
+                    {% if request.user.is_authenticated %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true" aria-expanded="false">
+                                {% avatar request.user 25 class="circle_avatar" %}
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu ">
+                                <li class="hello"><a href="{% url 'account:profile' %}">个人中心</a></li>
+                                <li class="hello"><a href="{% url 'account:update_user' user.id %}">修改用户</a></li>
+                                <li class="hello"><a href="{% url 'account:password_change' %}">修改密码</a></li>
+                                <li class="hello"><a href="{% url 'logout' %}">注销登录</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'account:register' %}">注册</a></li>
+                        <li><a href="{% url 'login' %}">登录</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
 
 {% block section %}
-    <div id="header"></div>
-    <div id="subheader">
-        <div class="cart">
-            your car is empty.
-        </div>
-    </div>
+
     <div id="content">
         {% block content %}
         {% endblock %}

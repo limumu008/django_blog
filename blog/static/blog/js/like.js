@@ -1,37 +1,56 @@
+// 监听事件
+let bus1 = new Vue();
+
+Vue.component('like-btn', {
+    props: ['is_liked'],
+    template: `<button class="btn btn-default" v-on:click="like" >\
+                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>\
+                </button>`,
+    methods: {
+        like: function () {
+            this.$emit('like');
+        }
+    }
+});
+
+let like_article = new Vue({
+    delimiters: ['[[', ']]'],
+    data: {
+        is_liked: is_liked,
+        article_likes: article_likes,
+    },
+    el: '#like-article',
+    methods: {
+        like: function () {
+            if (!login_status) {
+                location.href = login_url;
+            }
+            let target = 'article';
+            $.post(like_url, {
+                article_id: article_id,
+                target: target
+            }, function (data) {
+                like_article.is_liked = !like_article.is_liked;
+                if (like_article.is_liked) {
+                    // 赞了
+                    like_article.article_likes += 1;
+                }
+                else {
+                    // 取消赞
+                    like_article.article_likes -= 1;
+                }
+            });
+        }
+    }
+});
+
 $(document).ready(function () {
-    let articles_likes = parseInt($('#article_like_count').text());
-    $('#like_article_btn').click(function () {
-        let target = 'article';
-        // {# 用户未登录 #}
-        if (login_status === 'no') {
-            window.location.href = login_url;
-        }
-        else {
-            $.post(like_url,
-                {
-                    article_id: article_id,
-                    target: target
-                },
-                function (data) {
-                    // {# 用户点赞成功 #}
-                    $('#like_article_btn').toggleClass('already_like');
-                    if (data['status']) {
-                        articles_likes += 1;
-                        $('#article_like_count').text(articles_likes);
-                    }
-                    else {
-                        articles_likes -= 1;
-                        $('#article_like_count').text(articles_likes);
-                    }
-                });
-        }
-    });
     $('.like_comment_btn').click(function () {
         let target = 'comment';
         let comment_id = $(this).val();
         let count_likes = parseInt($('#like_comment_count_' + comment_id).text());
         // {# 用户未登录 #}
-        if (login_status === 'no') {
+        if (!login_status) {
             window.location.href = login_url;
         }
         else {
@@ -43,7 +62,7 @@ $(document).ready(function () {
                 function (data) {
                     // {# 用户点赞成功 #}
                     $('#like_c_btn_' + comment_id).toggleClass('already_like');
-                    if (data['status']) {
+                    if (data['is_liked']) {
                         count_likes += 1;
                         $('#like_comment_count_' + comment_id).text(count_likes);
                     }
@@ -59,7 +78,7 @@ $(document).ready(function () {
         let reply_id = $(this).val();
         let count_likes = parseInt($('#like_reply_count_' + reply_id).text());
         // {# 用户未登录 #}
-        if (login_status === 'no') {
+        if (!login_status) {
             window.location.href = login_url;
         }
         else {
@@ -71,7 +90,7 @@ $(document).ready(function () {
                 function (data) {
                     // {# 用户点赞成功 #}
                     $('#like_r_btn_' + reply_id).toggleClass('already_like');
-                    if (data['status']) {
+                    if (data['is_liked']) {
                         count_likes += 1;
                         $('#like_reply_count_' + reply_id).text(count_likes);
                     }

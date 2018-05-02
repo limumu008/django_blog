@@ -10,6 +10,7 @@
     <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/message_clear.js' %}"></script>
+    <script src="{% static 'js/vue.min.js' %}"></script>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap-theme.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
@@ -43,8 +44,9 @@
         <div class="container">
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a class="navbar-brand" href="{% url 'blog:index' %}">首页</a></li>
-                    <li><a href="{% url 'blog:archives' %}">档案</a></li>
+                    <li><a class="navbar-brand" href="{% url 'index' %}">首页</a></li>
+                    <li><a href="{% url 'blog:index' %}">博客</a></li>
+                    <li><a href="{% url 'blog:archives' %}">归档</a></li>
                     <li><a href="{% url 'blog:tags' %}">标签</a></li>
                     <li><a href="{% url 'account:user_list' %}">用户</a></li>
                 </ul>
@@ -84,6 +86,6 @@
 <footer>
     {% block footer %}{% endblock %}
 </footer>
-
+{% block vue_base %} {% endblock %}
 </body>
 </html>

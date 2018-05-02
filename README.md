@@ -44,4 +44,6 @@
     10. 添加 haystack 搜索引擎
 6. 商城
     1. app:shop
+    2. app:cart--使用 session
+    3. 使用 context_processor
         
