@@ -46,4 +46,5 @@
     1. app:shop
     2. app:cart--使用 session
     3. 使用 context_processor
+    4. app:order,使用 购物车创建订单。
         

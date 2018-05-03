@@ -6,6 +6,35 @@
     <link href="{% static 'account/css/account.css' %}" rel="stylesheet">
 {% endblock %}
 
+{% block header_left %}
+    <li><a href="{% url 'blog:index' %}">博客</a></li>
+    <li><a href="{% url 'blog:archives' %}">归档</a></li>
+    <li><a href="{% url 'blog:tags' %}">标签</a></li>
+    <li><a href="{% url 'account:user_list' %}">用户</a></li>
+    <li><a href="{% url 'shop:product_list' %}">商城</a></li>
+{% endblock %}
+
+{% block header_right %}
+    <li><a href="{% url 'blog:new_article' %}">写文章</a></li>
+    <li>
+        {% if user.is_authenticated %}
+            {% if cart|length > 0 %}
+                <a href="{% url 'cart:cart_detail' %}">
+                    购物车：<span id="cart-product-count">{{ cart|length }}</span>
+                </a>
+            {% else %}
+                <a href="{% url 'cart:cart_detail' %}">
+                    购物车：0
+                </a>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'login' %}">
+                购物车：0
+            </a>
+        {% endif %}
+    </li>
+{% endblock %}
+
 {% block section %}
     <div class="container">
         <div class="row">

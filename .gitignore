@@ -114,5 +114,6 @@ blog/migrations/
 actions/migrations/
 shop/migrations/
 cart/migrations/
+order/migrations/
 log/
 Pipfile

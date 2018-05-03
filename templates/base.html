@@ -38,23 +38,21 @@
         <div class="col-md-3"></div>
     </div>
 {% endif %}
+{% block index %}
 
-{% block header %}
     <nav class="navbar navbar-default navbar-fixed-top ">
         <div class="container">
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a class="navbar-brand" href="{% url 'index' %}">首页</a></li>
-                    <li><a href="{% url 'blog:index' %}">博客</a></li>
-                    <li><a href="{% url 'blog:archives' %}">归档</a></li>
-                    <li><a href="{% url 'blog:tags' %}">标签</a></li>
-                    <li><a href="{% url 'account:user_list' %}">用户</a></li>
+
+                    {% block header_left %} {% endblock %}
+
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li>{% block extra_form %}{% endblock %}</li>
-                    {% if request.user.profile.is_author %}
-                        <li><a href="{% url 'blog:new_article' %}">写文章</a></li>
-                    {% endif %}
+
+                    {% block header_right %} {% endblock %}
+
                     {% if request.user.is_authenticated %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
