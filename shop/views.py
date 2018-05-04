@@ -1,6 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
+from haystack.views import SearchView
 
 from shop.models import Category, Product
 
@@ -48,3 +49,5 @@ class ProductDetailView(generic.DetailView):
             is_logined = False
         context['is_logined'] = is_logined
         return context
+
+
