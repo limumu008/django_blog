@@ -20,6 +20,13 @@
 
 {% block header_right %}
     <li>
+        <form class="navbar-form" method="get" action="{% url 'shop:search_product' %}">
+            <input type="search" class="form-control" name="q" id="search_btn">
+            <label for="search_btn"></label>
+            <input type="submit" class="btn btn-default btn-sm" value="搜索">
+        </form>
+    </li>
+    <li>
         {% if user.is_authenticated %}
             <a href="{% url 'cart:cart_detail' %}">
                 购物车：<span id="cart-product-count">{{ cart|length }}</span>

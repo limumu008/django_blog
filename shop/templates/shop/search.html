@@ -1,0 +1,33 @@
+{% extends 'shop/base.html' %}
+
+{% load blog_tags static %}
+
+{% block content %}
+    {% if query %}
+        <h3>检索到的商品</h3>
+        <div class="container product-list" id="main">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-9">
+                    {% for result in page.object_list %}
+                        {% with product=result.object %}
+                            <div class="item">
+                                <a href="{{ product.get_absolute_url }}">
+                                    <img src="{% if product.image %}{{ product.image.url }}
+                                {% else %}{% static "shop/img/no_image.png" %}{% endif %}">
+                                </a>
+                                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a><br>
+                                ￥{{ product.price }}
+                            </div>
+                        {% endwith %}
+                    {% empty %}
+                        <p>换个词试试？</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>没有查询到结果~</p>
+    {% endif %}
+    <div class="col-md-1"></div>
+{% endblock %}
