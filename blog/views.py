@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import JsonResponse, Http404
@@ -20,6 +19,7 @@ from blog.search_indexes import ArticleIndex
 from blog.utils import toggle_pages, create_like
 from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm)
 from .models import Article, Reply, Comment
+from .tasks import article_shared
 
 
 class IndexView(generic.ListView):
@@ -210,10 +210,7 @@ def share_article(request, id):
         if form.is_valid():
             cd = form.cleaned_data
             article_url = request.build_absolute_uri(article.get_absolute_url())
-            subject = f"{cd['name']} 建议你读一下《{article.title}》"
-            message = f"{article_url} " \
-                      f"{cd['name']}的评论：{cd['comment']}"
-            send_mail(subject, message, 'wangzhou8284@163.com', [cd['to']])
+            article_shared.delay(url=article_url, cd=cd, article_id=article.id)
             create_action(request.user, article,
                           verb=f"{request.user.username} 分享了文章《{article.title}》")
             messages.success(request, '分享成功')
