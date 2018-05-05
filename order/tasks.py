@@ -10,8 +10,5 @@ def order_created(order_id):
     order = Order.objects.get(id=order_id)
     subject = f"Order:{order_id}"
     message = f"亲爱的 {order.customer},\n\n你的订单（订单：{order_id}）已成功下达。"
-    print(subject)
-    print(message)
     mail_sent = send_mail(subject, message, 'wangzhou8284@163.com', [order.email])
-    print(mail_sent)
     return mail_sent
