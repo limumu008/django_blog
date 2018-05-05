@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from cart.cart import Cart
 from order.forms import OrderForm
 from order.models import OrderItem
+from .tasks import order_created
 
 
 def create_order(request):
@@ -22,6 +23,8 @@ def create_order(request):
                 OrderItem.objects.create(order=order, product=item['product'], price=item['price'],
                                          quantity=item['quantity'])
             cart.clear()
+            # send mail by celery
+            order_created.delay(order.id)
             messages.success(request, '结算成功，请继续享受购物吧~')
             return redirect('shop:product_list')
     else:
