@@ -20,7 +20,7 @@
     </div>
     <form action="." method="post" class="order-form">
         {{ order_form.as_p }}
-        <p><input type="submit" value="提交订单"></p>
+        <p><input type="submit" value="去支付"></p>
         {% csrf_token %}
     </form>
 
