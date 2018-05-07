@@ -1,15 +1,6 @@
 {% extends 'account/base.html' %}
 {% load avatar_tags account_tags humanize blog_tags %}
 {% block title %}个人中心{% endblock %}
-{% block extra_js %}
-    <script>
-        $(document).ready(function () {
-            $('.circle_avatar').mouseover(function () {
-
-            });
-        });
-    </script>
-{% endblock %}
 
 {% block main %}
     <div class="col-md-4">
@@ -50,12 +41,15 @@
         {% endif %}
     </div>
     <div class="col-md-3">
-        <h2>{{ user }}的博客</h2>
+        <h2>我的博客</h2>
         {% if request.user.is_authenticated %}
             <p>我已经写了{% article_counts request.user %}篇文章</p>
             <p><a href="{% url 'blog:my_articles' %}">我的文章</a></p>
             <p>我已经写了{% draft_counts request.user %}篇草稿</p>
             <p><a href="{% url 'blog:my_drafts' %}">我的草稿</a></p>
         {% endif %}
+        <h2>我的订单</h2>
+        <p>已支付了{{ orders_paid.count }}笔订单 <a href="{% url 'order:orders_paid' user.username %}">查看</a></p>
+        <p>未支付{{ orders_not_paid.count }}笔订单 <a href="{% url 'order:orders_not_paid' user.username %}">查看</a></p>
     </div>
 {% endblock %}

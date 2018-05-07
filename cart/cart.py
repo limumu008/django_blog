@@ -41,7 +41,6 @@ class Cart:
     def clear(self):
         """remove cart from session"""
         del self.session[settings.CART_SESSION_ID]
-        self.session.modified = True
 
     def save(self):
         """update session"""

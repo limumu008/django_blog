@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from paypal.standard.forms import PayPalPaymentsForm
 
+from account.models import User
 from cart.cart import Cart
 from django_blog import settings
 from order.forms import OrderForm
@@ -36,9 +38,15 @@ def create_order(request):
     return render(request, 'order/create.html', {'order_form': order_form, 'cart': cart})
 
 
-def payment_process(request):
+def payment_process(request, order_id=None):
     """process order with paypal"""
-    order_id = request.session['order_id']
+    try:
+        # 立即购买
+        order_id = request.session['order_id']
+        del request.session['order_id']
+    except KeyError:
+        # 之后支付
+        order_id = order_id
     order = get_object_or_404(Order, id=order_id)
     paypal_dict = {
         # 商家邮箱
@@ -69,3 +77,25 @@ def payment_done(request):
 @csrf_exempt
 def payment_canceled(request):
     return render(request, 'order/pay_canceled.html')
+
+
+class OrderPaidView(generic.ListView):
+    template_name = 'order/list.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        user = get_object_or_404(User, username=username)
+        orders_paid = Order.objects.filter(customer=user, is_paid=True).prefetch_related('items')
+        return orders_paid
+
+
+class OrderNotPaidView(generic.ListView):
+    template_name = 'order/list.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        user = get_object_or_404(User, username=username)
+        orders_paid = Order.objects.filter(customer=user, is_paid=False).prefetch_related('items')
+        return orders_paid

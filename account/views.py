@@ -44,6 +44,9 @@ def account_profile(request):
     user = request.user
     # 用户关注的人
     stars = user.star0.all()
+    # 订单
+    orders_paid = user.orders.filter(is_paid=True)
+    orders_not_paid = user.orders.filter(is_paid=False)
     # star 动作流
     action_list = Action.objects.filter(user__in=stars)[:50].select_related('user')
     # 分页开关
@@ -56,7 +59,8 @@ def account_profile(request):
         'user': user,
         'page_toggle': page_toggle,
         'actions': actions,
-
+        'orders_paid': orders_paid,
+        'orders_not_paid': orders_not_paid,
     }
     return render(request, 'account/profile.html', context)
 
