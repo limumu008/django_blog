@@ -61,10 +61,6 @@ def payment_process(request):
     return render(request, 'order/payment.html', context)
 
 
-def pay_result_signal(request):
-    """处理 PayPal 返回的支付是否成功的信号"""
-
-
 @csrf_exempt
 def payment_done(request):
     return render(request, 'order/pay_done.html')
