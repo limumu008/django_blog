@@ -40,14 +40,10 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a class="navbar-brand" href="{% url 'index' %}">首页</a></li>
-
                     {% block header_left %} {% endblock %}
-
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-
                     {% block header_right %} {% endblock %}
-
                     {% if request.user.is_authenticated %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
