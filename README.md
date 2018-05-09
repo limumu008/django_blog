@@ -51,3 +51,4 @@
     6. 使用 celery 在结算订单时发送邮件
     7. 使用 celery 在分享文章时发送邮件
     8. 添加 PayPal 支付
+    9. app:coupon
