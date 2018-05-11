@@ -70,7 +70,12 @@
                         </tr>
                         </tbody>
                     </table>
-                    <p class="text-right">
+                    <form action="{% url 'cart:cart_detail' %}" method="post" class="form-inline text-right">
+                        {{ coupon_form.code }}
+                        {% csrf_token %}
+                        <input type="submit" class="form-control" value="使用优惠劵">
+                    </form>
+                    <p class="text-right else-down">
                         <a href="{% url "shop:product_list" %}" class="button light">继续购物</a>
                         <a href="{% url 'order:create_order' %}" class="button btn btn-danger">结算</a>
                     </p>

@@ -1,9 +1,12 @@
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404, render, redirect
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from cart.cart import Cart
+from coupons.forms import CouponForm
+from coupons.models import Coupon
 from shop.models import Product
 
 
@@ -36,4 +39,20 @@ def change_cart(request):
 def cart_detail(request):
     """展示 cart"""
     cart = Cart(request)
-    return render(request, 'cart/cart_detail.html', {'cart': cart})
+    now = timezone.now()
+    if request.method == 'POST':
+        coupon_form = CouponForm(request.POST)
+        if coupon_form.is_valid():
+            code = coupon_form.cleaned_data['code']
+            try:
+                coupon = get_object_or_404(Coupon,
+                                           code=code,
+                                           is_actived=True,
+                                           valid_from__lt=now,
+                                           valid_to__gt=now,
+                                           )
+            except Http404:
+                messages.warning(request, f"优惠劵代码错误/已过期/已失效")
+    else:
+        coupon_form = CouponForm()
+    return render(request, 'cart/cart_detail.html', {'cart': cart, 'coupon_form': coupon_form})
