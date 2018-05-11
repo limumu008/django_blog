@@ -1,12 +1,9 @@
-from django.contrib import messages
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from cart.cart import Cart
 from coupons.forms import CouponForm
-from coupons.models import Coupon
 from shop.models import Product
 
 
@@ -26,7 +23,15 @@ def change_cart(request):
     elif request.POST.get('action') == 'remove_product':
         this_price = product.price * int(cart[request.POST.get('product_id')]['quantity'])
         cart.remove(product)
-        return JsonResponse({'status': 'rm_success', 'this_price': this_price})
+        if cart.coupon:
+            discount = cart.coupon.discount
+        else:
+            discount = 0
+        return JsonResponse(
+            {'status': 'rm_success',
+             'this_price': this_price,
+             'discount': discount}
+        )
     elif request.POST.get('action') == 'clear_cart':
         cart.clear()
     # 修改 cart 中 product 数量 --not ajax
@@ -39,20 +44,5 @@ def change_cart(request):
 def cart_detail(request):
     """展示 cart"""
     cart = Cart(request)
-    now = timezone.now()
-    if request.method == 'POST':
-        coupon_form = CouponForm(request.POST)
-        if coupon_form.is_valid():
-            code = coupon_form.cleaned_data['code']
-            try:
-                coupon = get_object_or_404(Coupon,
-                                           code=code,
-                                           is_actived=True,
-                                           valid_from__lt=now,
-                                           valid_to__gt=now,
-                                           )
-            except Http404:
-                messages.warning(request, f"优惠劵代码错误/已过期/已失效")
-    else:
-        coupon_form = CouponForm()
-    return render(request, 'cart/cart_detail.html', {'cart': cart, 'coupon_form': coupon_form})
+    coupon_form = CouponForm()
+    return render(request, 'cart/cart_detail.html', locals())

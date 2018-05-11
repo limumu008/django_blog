@@ -30,6 +30,7 @@ def create_order(request):
             cart.clear()
             # store order id
             request.session['order_id'] = order.id
+            print(request.session.items())
             # send notice mail by celery
             order_created.delay(order.id)
             return redirect('order:payment_process')

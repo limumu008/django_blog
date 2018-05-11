@@ -6,7 +6,6 @@
     <script>
         const change_cart_url = "{% url 'cart:change_cart' %}";
     </script>
-    <script src="{% static 'cart/js/rm_product.js' %}"></script>
 {% endblock %}
 
 {% block section %}
@@ -38,9 +37,7 @@
                                 <tr id="tr-{{ product.id }}">
                                     <td>
                                         <a href="{{ product.get_absolute_url }}">
-                                            <img src="{% if product.image %}
-{{ product.image|thumbnail_url:'product_in_cart' }}
-                                {% else %}{% static "shop/img/no_image.png" %}{% endif %}">
+                                            <img src="{% if product.image %}{{ product.image|thumbnail_url:'product_in_cart' }}{% else %}{% static "shop/img/no_image.png" %}{% endif %}">
                                         </a>
                                     </td>
                                     <td>{{ product.name }}</td>
@@ -54,27 +51,43 @@
                                         </form>
                                     </td>
                                     <td>
-                                        <button class="btn btn-danger remove-btn" value="{{ product.id }}">
+                                        <button class="btn btn-danger remove-btn" value="{{ product.id }}"
+                                                v-on:click="rm_product">
                                             移除
                                         </button>
                                     </td>
-                                    <td class="num">￥{{ item.price }}</td>
-                                    <td class="num">￥{{ item.total_price }}</td>
+                                    <td class="num">${{ item.price }}</td>
+                                    <td class="num">${{ item.total_price }}</td>
                                 </tr>
                             {% endwith %}
                         {% endfor %}
+                        {% if cart.coupon %}
+                            <tr class="subtotal">
+                                <td>合计</td>
+                                <td colspan="4"></td>
+                                <td class="num">$[[total_price]]</td>
+                            </tr>
+                            <tr>
+                                <td>优惠劵：{{ cart.coupon.code }}(折扣{{ cart.coupon.discount }}%)</td>
+                                <td colspan="4"></td>
+                                <td class="num neg">-$[[discount]]</td>
+                            </tr>
+                        {% endif %}
                         <tr class="total">
-                            <td>合计</td>
+                            <td>合计{% if cart.coupon %}(优惠){% endif %}</td>
                             <td colspan="4"></td>
-                            <td class="num">￥<span id="total-price">{{ cart.get_total_price }}</span></td>
+                            <td class="num">$<span id="total-price">[[total_price_after_discount]]</span>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
-                    <form action="{% url 'cart:cart_detail' %}" method="post" class="form-inline text-right">
-                        {{ coupon_form.code }}
-                        {% csrf_token %}
-                        <input type="submit" class="form-control" value="使用优惠劵">
-                    </form>
+                    {% if not cart.coupon %}
+                        <form action="{% url 'coupon:apply_coupon' %}" method="post" class="form-inline text-right">
+                            {{ coupon_form.code }}
+                            {% csrf_token %}
+                            <input type="submit" class="form-control" value="使用优惠劵">
+                        </form>
+                    {% endif %}
                     <p class="text-right else-down">
                         <a href="{% url "shop:product_list" %}" class="button light">继续购物</a>
                         <a href="{% url 'order:create_order' %}" class="button btn btn-danger">结算</a>
@@ -88,4 +101,10 @@
 {% endblock %}
 
 {% block extra_vue %}
+    <script>
+        let total_price ={{ cart.get_total_price|safe }};
+        let discount ={{ cart.get_discount|safe }};
+        let total_price_after_discount ={{ cart.get_total_price_after_discount|safe }};
+    </script>
+    <script src="{% static 'cart/js/rm_product.js' %}"></script>
 {% endblock %}

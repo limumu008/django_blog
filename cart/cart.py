@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from coupons.models import Coupon
 from django_blog import settings
 from shop.models import Product
 
@@ -10,6 +11,7 @@ class Cart:
         self.session = request.session
         # 这里拿到了 sessions 中的 cart，不存在就设为 {}
         self.cart = self.session.setdefault(settings.CART_SESSION_ID, {})
+        self.coupon_id = self.session.get('coupon_id')
 
     def __str__(self):
         return str(self.cart)
@@ -41,6 +43,8 @@ class Cart:
     def clear(self):
         """remove cart from session"""
         del self.session[settings.CART_SESSION_ID]
+        if self.session['coupon_id']:
+            del self.session['coupon_id']
 
     def save(self):
         """update session"""
@@ -73,3 +77,19 @@ class Cart:
 
     def get_total_price(self):
         return sum(item['total_price'] for item in self.cart.values())
+
+    # 优惠劵
+    @property
+    def coupon(self):
+        if self.coupon_id:
+            return Coupon.objects.get(id=self.coupon_id)
+        return None
+
+    def get_discount(self):
+        if self.coupon:
+            return self.get_total_price() * self.coupon.discount / 100
+        else:
+            return Decimal('0')
+
+    def get_total_price_after_discount(self):
+        return self.get_total_price() - self.get_discount()
