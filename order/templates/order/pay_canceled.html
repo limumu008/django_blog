@@ -1,2 +1,5 @@
-{# todo 支付取消或失败的模板 #}
-cancel
+{% extends 'order/base.html' %}
+{% block main %}
+    <h1>支付失败</h1>
+    <p><a href="{% url 'shop:product_list' %}">继续购物吧</a></p>
+{% endblock %}

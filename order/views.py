@@ -22,6 +22,9 @@ def create_order(request):
             order = order_form.save(commit=False)
             order.customer = request.user
             order.email = request.user.email
+            if cart.coupon:
+                order.coupon = cart.coupon
+                order.discount = cart.coupon.discount
             order.save()
             # create order_item
             for item in cart:
@@ -30,7 +33,6 @@ def create_order(request):
             cart.clear()
             # store order id
             request.session['order_id'] = order.id
-            print(request.session.items())
             # send notice mail by celery
             order_created.delay(order.id)
             return redirect('order:payment_process')
