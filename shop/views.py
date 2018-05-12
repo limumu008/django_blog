@@ -1,9 +1,9 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from haystack.views import SearchView
 
 from shop.models import Category, Product
+from shop.recommender import Recommender
 
 
 def product_list(request, category_slug=None):
@@ -43,11 +43,19 @@ class ProductDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # 是否登录
         if self.request.user.is_authenticated:
             is_logined = True
         else:
             is_logined = False
         context['is_logined'] = is_logined
+        # 推荐产品
+        recommender = Recommender()
+        product = context['product']
+        suggest_product_ids = recommender.get_suggest_products([product])
+        if not suggest_product_ids:
+            context['suggest_products'] = None
+        else:
+            suggest_products = Product.objects.filter(pk__in=suggest_product_ids, is_sold=True)
+            context['suggest_products'] = suggest_products
         return context
-
-

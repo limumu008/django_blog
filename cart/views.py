@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from cart.cart import Cart
 from coupons.forms import CouponForm
 from shop.models import Product
+from shop.recommender import Recommender
 
 
 @require_POST
@@ -45,4 +46,12 @@ def cart_detail(request):
     """展示 cart"""
     cart = Cart(request)
     coupon_form = CouponForm()
+    # 推荐
+    recommender = Recommender()
+    cart_products = [item['product'] for item in cart]
+    suggest_product_ids = recommender.get_suggest_products(cart_products)
+    if not suggest_product_ids:
+        suggest_products = None
+    else:
+        suggest_products = Product.objects.filter(pk__in=suggest_product_ids, is_sold=True)
     return render(request, 'cart/cart_detail.html', locals())

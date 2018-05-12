@@ -9,6 +9,7 @@ from cart.cart import Cart
 from django_blog import settings
 from order.forms import OrderForm
 from order.models import OrderItem, Order
+from shop.recommender import Recommender
 from .tasks import order_created
 
 
@@ -35,6 +36,10 @@ def create_order(request):
             request.session['order_id'] = order.id
             # send notice mail by celery
             order_created.delay(order.id)
+            # 推荐计分
+            recommender = Recommender()
+            recommender.cal_products_bought([item.product for item in order.items.all()])
+            # 重定向到支付页
             return redirect('order:payment_process')
     else:
         order_form = OrderForm()
