@@ -116,5 +116,6 @@ shop/migrations/
 cart/migrations/
 order/migrations/
 coupons/migrations/
+courses/migrations/
 log/
 Pipfile

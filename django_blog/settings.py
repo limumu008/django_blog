@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'haystack',
     'django.forms',
     'blog.apps.BlogConfig',
+    'courses.apps.CoursesConfig',
     'taggit',
     'markdownx',
     'gunicorn',
