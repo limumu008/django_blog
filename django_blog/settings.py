@@ -76,7 +76,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'host': 'localhost',
-        'TIME_ZONE': 'Asia/Shanghai',
+        'TIME_ZONE': 'UTC',
         'OPTIONS': {
             'read_default_file': 'C:\ProgramData\MySQL\MySQL Server 5.7\my.ini',
             'isolation_level': 'read committed',

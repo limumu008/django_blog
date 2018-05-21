@@ -1,0 +1,10 @@
+{% extends 'blog/base.html' %}
+
+{% block title %} 归档 {% endblock %}
+
+{% block main %}
+    {% for article in articles %}
+        {% include 'blog/include/in_article.html' with article=article %}
+    {% endfor %}
+    {% include 'paginator.html' with page=page_obj %}
+{% endblock %}

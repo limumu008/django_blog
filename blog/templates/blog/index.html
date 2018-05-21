@@ -40,4 +40,12 @@
             </li>
         {% endfor %}
     </ul>
+    <h2>归档</h2>
+    <ul>
+        {% for date in dates %}
+            <a href="{% url 'blog:archives' date.year date.month %}">
+                <li>{{ date.year }}年-{{ date.month }}月</li>
+            </a>
+        {% endfor %}
+    </ul>
 {% endblock %}

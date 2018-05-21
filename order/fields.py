@@ -23,9 +23,10 @@ class OrderField(models.PositiveIntegerField):
                 qs = self.model.objects.all()
                 if self.for_fields:
                     query = {field: getattr(model_instance, field) for field in self.for_fields}
-                    print('3-query', query)
                     # 查询 同一外键（for_fields）下的当前模型实例
+                    # exp；query: {'course': <Course: javascript tutorial>}
                     qs = qs.filter(**query)
+                    # exp：查询 Module 的外键 Course 下的全部 Modules
                 # 通过 order 排序的最新的一个模型实例
                 last_item = qs.latest(self.attname)
                 value = last_item.order + 1

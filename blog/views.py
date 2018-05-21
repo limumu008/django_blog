@@ -12,6 +12,7 @@ from django.shortcuts import (
 )
 from django.views import generic
 from django.views.decorators.http import require_POST
+from django.views.generic import ListView
 from taggit.models import Tag
 
 from actions.utils import create_action
@@ -41,6 +42,9 @@ class IndexView(generic.ListView):
         context = super().get_context_data(**kwargs)
         page_toggle = toggle_pages(context['articles'])
         context['page_toggle'] = page_toggle
+        # 归档月
+        dates = Article.published.dates('publish', 'month', order='DESC')
+        context['dates'] = dates
         try:
             context['tag'] = self.tag
             return context
@@ -84,24 +88,19 @@ class MyDrafts(LoginRequiredMixin, IndexView):
                 filter(status='draft')
 
 
-def archives(request):
-    """文章归档"""
-    archives = []
-    dates = Article.published.dates('publish', 'month', order='DESC')
-    for date in dates:
-        year = date.year
-        month = date.month
+class ArchiveListView(ListView):
+    context_object_name = 'articles'
+    template_name = 'blog/archives.html'
+    paginate_by = 10
 
-        if month < 10:
-            month_str = str(year) + '-0' + str(month)
+    def get_queryset(self):
+        if self.kwargs['month'] < 10:
+            month_str = str(self.kwargs['year']) + '-0' + str(self.kwargs['month'])
         else:
-            month_str = str(year) + '-' + str(month)
+            month_str = str(self.kwargs['year']) + '-' + str(self.kwargs['month'])
         articles = Article.published.filter(
-            publish__startswith=month_str).order_by('-publish')
-        archives.append(articles)
-    date_archives = zip(dates, archives)
-    context = {'date_archives': date_archives}
-    return render(request, 'blog/article_archives.html', context)
+            publish__startswith=month_str)
+        return articles
 
 
 class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):

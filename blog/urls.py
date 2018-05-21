@@ -7,7 +7,8 @@ app_name = 'blog'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path(r'search/', SearchView(template='blog/search.html'), name='search'),
-    path(r'archives/', views.archives, name='archives'),
+    path(r'archives/<int:year>/<int:month>/',
+         views.ArchiveListView.as_view(), name='archives'),
     path(r'my_articles/', views.MyArticles.as_view(), name='my_articles'),
     path(r'my_articles/<slug:tag_slug>/', views.MyArticles.as_view(), name='my_articles_tags'),
     path(r'my_drafts/', views.MyDrafts.as_view(), name='my_drafts'),

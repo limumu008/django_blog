@@ -15,6 +15,7 @@ urlpatterns = [
                   path('cart/', include('cart.urls')),
                   path('order/', include('order.urls')),
                   path('coupon/', include('coupons.urls')),
+                  path('course/', include('courses.urls')),
                   path('admin/', admin.site.urls),
                   path(r'markdownx/', include('markdownx.urls')),
                   path(r'avatar/', include('avatar.urls'), )] + static(settings.STATIC_URL,

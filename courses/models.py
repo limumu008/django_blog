@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.urls import reverse
 
 from django_blog import settings
 from order.fields import OrderField
@@ -35,6 +36,9 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('course:course_detail', kwargs={'pk': self.pk})
 
 
 class Module(models.Model):
