@@ -53,3 +53,6 @@
     8. 添加 PayPal 支付
     9. app:coupon
     10. 推荐系统
+7. 在线学习平台
+    1. app:courses
+    2. 自定义字段：order

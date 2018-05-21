@@ -20,3 +20,4 @@ class Action(models.Model):
 
     class Meta:
         ordering = ('-updated',)
+
