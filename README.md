@@ -56,3 +56,4 @@
 7. 在线学习平台
     1. app:courses
     2. 自定义字段：order
+    3. Profile 添加 is_teacher field
