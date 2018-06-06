@@ -3,9 +3,12 @@
 {% block title %} 删除课程 {% endblock %}
 
 {% block content %}
-    <form method="post" action=".">
-        {% csrf_token %}
-        <p>确定删除{{ object }}?</p>
-        <input type="submit" value="删除课程">
-    </form>
+    <h2>删除课程：{{ course.title }}</h2>
+    <div class="module">
+        <form method="post" action=".">
+            {% csrf_token %}
+            <p>确定删除课程：{{ object }}?</p>
+            <input type="submit" value="删除课程">
+        </form>
+    </div>
 {% endblock %}

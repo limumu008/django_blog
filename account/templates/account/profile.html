@@ -50,6 +50,18 @@
         {% endif %}
         <h2>我的订单</h2>
         <p>已支付了{{ orders_paid.count }}笔订单 <a href="{% url 'order:orders_paid' user.username %}">查看</a></p>
-        <p>未支付{{ orders_not_paid.count }}笔订单 <a href="{% url 'order:orders_not_paid' user.username %}">查看</a></p>
+        <p>未支付{{ orders_not_paid.count }}笔订单
+            <a href="{% url 'order:orders_not_paid' user.username %}">查看</a>
+        </p>
+        <h2>课程管理</h2>
+        <ul>
+            {% if perms.courses.add_course %}
+                <li><a href="{% url 'course:course_create' %}">创建课程</a></li>
+                <li><a href="{% url 'course:teacher_courses' user.pk user.username %}">管理课程</a></li>
+            {% else %}
+                <li><a href="{% url 'course:be_teacher' %}">成为老师</a></li>
+            {% endif %}
+        </ul>
     </div>
+
 {% endblock %}

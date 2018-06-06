@@ -256,3 +256,7 @@ ul#course-modules li:hover {
     color: #ccc;
     padding-left: 20px;
 }
+
+.extra_info {
+    font-size: 0.8em;
+}

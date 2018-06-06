@@ -3,9 +3,12 @@
 {% block title %} 创建课程 {% endblock %}
 
 {% block content %}
-    <form action="." method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="新建课程">
-    </form>
+    <h2>创建新课程</h2>
+    <div class="module">
+        <form action="." method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="新建课程">
+        </form>
+    </div>
 {% endblock %}
