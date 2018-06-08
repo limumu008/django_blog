@@ -57,7 +57,7 @@
         <ul>
             {% if perms.courses.add_course %}
                 <li><a href="{% url 'course:course_create' %}">创建课程</a></li>
-                <li><a href="{% url 'course:teacher_courses' user.pk user.username %}">管理课程</a></li>
+                <li><a href="{% url 'course:teacher_courses' user.username user.pk %}">管理课程</a></li>
             {% else %}
                 <li><a href="{% url 'course:be_teacher' %}">成为老师</a></li>
             {% endif %}

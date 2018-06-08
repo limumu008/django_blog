@@ -30,6 +30,8 @@ class Course(models.Model):
     slug = models.SlugField(max_length=50, unique=True)
     overview = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
+    students = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                      related_name='courses_joined', blank=True)
 
     class Meta:
         ordering = ('-created',)
@@ -38,7 +40,7 @@ class Course(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('course:course_detail', kwargs={'pk': self.pk})
+        return reverse('course:course_detail', args=(self.slug,))
 
 
 class Module(models.Model):
@@ -54,6 +56,9 @@ class Module(models.Model):
 
     def __str__(self):
         return f"{self.order}:{self.title}"
+
+    def get_absolute_url(self):
+        return reverse('course:module_content_list', kwargs={'pk': self.pk})
 
 
 class Content(models.Model):

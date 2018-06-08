@@ -1,40 +1,53 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import redirect
+from django.db.models import Count
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
 
-from courses.models import Course
+from .forms import ModuleFormSet
+from .models import Course, Module, Content, Subject
+from .utils import get_model, get_modelform
 
 
 class CourseListView(generic.ListView):
-    template_name = 'courses/manage/course/list.html'
-    context_object_name = 'courses'
-    queryset = Course.objects.all()
-
-    def get_queryset(self):
-        try:
-            user = get_user_model().objects.get(pk=self.kwargs['pk'])
-            return Course.objects.filter(teacher=user)
-        except KeyError:
-            return self.queryset
+    model = Course
+    template_name = 'courses/course/list.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
+        print(self.kwargs)
+        subjects = Subject.objects.annotate(total_courses=Count('courses'))
+        courses = Course.objects.annotate(total_modules=Count('modules'))
         try:
-            user = get_user_model().objects.get(pk=self.kwargs['pk'])
-            is_mine = True
-        except KeyError:
-            is_mine = False
-        context['is_mine'] = is_mine
+            print('try')
+            subject_slug = self.kwargs.get('subject_slug')
+            subject = get_object_or_404(Subject, slug=subject_slug)
+            courses = Course.objects.filter(subject=subject)
+        except Exception as e:
+            print(e)
+            subject = None
+        context = super().get_context_data(**kwargs)
+        context['subjects'] = subjects
+        context['courses'] = courses
+        context['subject'] = subject
+        print(subject, subjects, courses)
         return context
+
+
+class TeacherCourseListView(generic.ListView):
+    template_name = 'courses/manage/course/list.html'
+    context_object_name = 'courses'
+
+    def get_queryset(self):
+        user = get_user_model().objects.get(pk=self.kwargs['pk'])
+        return Course.objects.filter(teacher=user)
 
 
 class CourseDetailView(generic.DetailView):
     model = Course
     context_object_name = 'course'
-    template_name = 'courses/manage/course/detail.html'
+    template_name = 'courses/course/detail.html'
 
 
 class CreateCourseView(PermissionRequiredMixin, generic.CreateView):
@@ -47,7 +60,13 @@ class CreateCourseView(PermissionRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         form.instance.teacher = self.request.user
+        self.object = form.save()
+        Module.objects.create(course=self.object, title='')
         return super().form_valid(form)
+
+    def get_success_url(self):
+        module = self.object.modules.first()
+        return module.get_absolute_url()
 
 
 class UpdateCourseView(PermissionRequiredMixin, generic.UpdateView):
@@ -56,6 +75,10 @@ class UpdateCourseView(PermissionRequiredMixin, generic.UpdateView):
     template_name = 'courses/manage/course/update.html'
     permission_required = 'courses.change_course'
     raise_exception = True
+
+    def get_success_url(self):
+        module = self.object.modules.first()
+        return module.get_absolute_url()
 
 
 class DeleteCourseView(PermissionRequiredMixin, generic.DeleteView):
@@ -66,7 +89,80 @@ class DeleteCourseView(PermissionRequiredMixin, generic.DeleteView):
     raise_exception = True
 
 
+class ModuleContentDetailView(generic.DetailView):
+    model = Module
+    template_name = 'courses/manage/module/content_list.html'
+    context_object_name = 'module'
+
+
+class CourseModuleEditView(generic.UpdateView):
+    context_object_name = 'course'
+    template_name = 'courses/manage/module/formset.html'
+
+    def get_object(self, queryset=None):
+        """ get the course will be edited"""
+        return Course.objects.get(pk=self.kwargs.get('pk'))
+
+    def get_context_data(self, **kwargs):
+        if 'view' not in kwargs:
+            kwargs['view'] = self
+        if self.extra_context is not None:
+            kwargs.update(self.extra_context)
+        if self.request.method == 'POST':
+            formset = self.get_formset(data=self.request.POST)
+        else:
+            formset = self.get_formset()
+        kwargs['formset'] = formset
+        kwargs['course'] = self.get_object()
+        return kwargs
+
+    def get_formset(self, data=None):
+        return ModuleFormSet(instance=self.get_object(), data=data)
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid():
+            module = Course.objects.get(pk=self.kwargs.get('pk')).modules.first()
+            return redirect(module)
+
+
+def edit_module_content(request, module_id, model_name, *, id=None):
+    module = get_object_or_404(Module, pk=module_id)
+    model = get_model(model_name)
+    # 获取创建 content 类型的 model,用于创建 ModelForm
+    if id:
+        # 提供 id，update
+        content_object = get_object_or_404(model, pk=id, owner=request.user)
+    else:
+        # 不提供 id，create
+        content_object = None
+    if request.method == 'POST':
+        form = get_modelform(model)(data=request.POST, files=request.FILES, instance=content_object)
+        if form.is_valid():
+            content_object = form.save(commit=False)
+            content_object.owner = request.user
+            content_object.save()
+            if not id:
+                Content.objects.create(module=module, target=content_object)
+            return redirect(module)
+    else:
+        form = get_modelform(model)(instance=content_object)
+    context = {'form': form, 'object': content_object}
+    return render(request, 'courses/manage/module/form.html', context)
+
+
+def delete_module_content(request, id):
+    if request.method == 'POST':
+        content = get_object_or_404(Content, id=id, module__course__teacher=request.user)
+        module = content.module
+        content.target.delete()
+        content.delete()
+        return redirect(module)
+
+
 def be_teacher(request):
+    """ get group teacher"""
     user = request.user
     user.profile.is_teacher = True
     user.save()
@@ -74,3 +170,7 @@ def be_teacher(request):
     user.groups.add(3)
     messages.success(request, '成功成为老师')
     return redirect('account:profile')
+
+
+def enroll(request):
+    """user enroll course"""

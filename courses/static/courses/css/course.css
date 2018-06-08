@@ -100,13 +100,13 @@ h1 {
 
 .contents ul span {
     text-transform: uppercase;
-    color: #bbb;
+    color: black;
     font-size: 14px;
 }
 
 .contents ul a {
     display: block;
-    color: #fff;
+    color: black;
     text-decoration: none;
 }
 
@@ -259,4 +259,8 @@ ul#course-modules li:hover {
 
 .extra_info {
     font-size: 0.8em;
+}
+
+.course-indent {
+    text-indent: 80px;
 }

@@ -6,13 +6,13 @@
     <div class="module">
         {% for course in courses %}
             <div class="course-info">
-                <h3><a href="{{ course.get_absolute_url }}">{{ course.title }}</a></h3>
+                {% with  first_module=course.modules.first %}
+                    <h3><a href="{{ first_module.get_absolute_url }}">{{ course.title }}</a></h3>
+                {% endwith %}
                 <p class="extra_info">
                     {{ course.teacher }} {{ course.created|date:'y/m/d' }}<br>
-                    {% if is_mine %}
-                        <a href="{% url 'course:course_update' course.pk %}">更新课程</a>
-                        <a href="{% url 'course:course_delete' course.pk %}">删除课程</a>
-                    {% endif %}
+                    <a href="{% url 'course:course_update' course.pk %}">更新课程信息</a>
+                    <a href="{% url 'course:course_delete' course.pk %}">删除课程</a>
                 </p>
             </div>
         {% endfor %}

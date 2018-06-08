@@ -3,12 +3,12 @@
 {% block title %} 修改课程 {% endblock %}
 
 {% block content %}
-    <h2>更新课程</h2>
+    <h2>更新课程信息</h2>
     <div class="module">
         <form action="." method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <input type="submit" value="修改课程">
+            <input type="submit" value="更新">
         </form>
     </div>
 {% endblock %}
