@@ -1,8 +1,19 @@
 {% extends "courses/base.html" %}
 
-{% block title %}
-    {{ course.title }}
+{% load static %}
+
+{% block title %} {{ course.title }} {% endblock %}
+
+{% block extra_js %}
+    <script>
+        let is_logined ={{ is_logined|yesno:'true,false,maybe' }};
+        let is_enrolled ={{ is_enrolled|yesno:'true,false,maybe' }};
+        const login_url = "{% url 'login' %}";
+        const enroll_url = "{% url 'course:enroll' %}";
+        let course_id = "{{ course.id }}";
+    </script>
 {% endblock %}
+
 {% block content %}
     {% with subject=course.subject %}
         <h1>
@@ -14,6 +25,9 @@
                 <a href="{% url "course:course_list_subject" subject.slug %}">{{ subject.title }}</a>.
                 老师: {{ course.teacher.username }}
             </p>
+            <button v-on:click="enroll" class="btn btn-primary" id="enroll_button">
+                [[text]]
+            </button>
             {{ course.overview|linebreaks }}
             <ol>
                 {% for m in course.modules.all %}
@@ -22,4 +36,9 @@
             </ol>
         </div>
     {% endwith %}
+{% endblock %}
+
+{% block extra_vue %}
+    <script src="{% static 'js/get_crsftoken.js' %}"></script>
+    <script src="{% static 'courses/js/enroll.js' %}"></script>
 {% endblock %}

@@ -25,7 +25,7 @@
         <span class="count">
             粉丝数：<span id="total_fans">[[fans_quantity]]</span>
         </span>
-        <button v-on:click="follow" class="btn btn-primary" id="follow_button">
+        <button v-on:click="follow" id="follow_button" class="btn btn-primary">
             [[text]]
         </button>
     </div>
@@ -50,7 +50,8 @@
             {% include 'paginator.html' with page=actions %}
         {% endif %}
     </div>
-    {% block extra_vue %}
-        <script src="{% static 'account/js/follow.js' %}"></script>
-    {% endblock %}
+{% endblock %}
+
+{% block extra_vue %}
+    <script src="{% static 'account/js/follow.js' %}"></script>
 {% endblock %}

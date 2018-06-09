@@ -24,7 +24,15 @@
         {% for course in courses %}
             {% with subject=course.subject %}
                 {% with course.modules.first as first_module %}
-                    <h3><a href="{{ first_module.get_absolute_url }}">{{ course.title }}</a></h3>
+                    {% if user == course.teacher %}
+                        {# 如果是当前课程的老师，链接模块页 #}
+                        <h3><a href="{{ first_module.get_absolute_url }}">{{ course.title }}</a></h3>
+                    {% elif course in user.courses_joined.all %}
+                        <h3><a href="{{ first_module.get_absolute_url }}">{{ course.title }}</a></h3>
+                    {% else %}
+                        <h3><a href="{{ course.get_absolute_url }}">{{ course.title }}</a></h3>
+                    {% endif %}
+
                 {% endwith %}
                 <p>
                     <a href="{% url "course:course_list_subject" subject.slug %}">{{ subject }}</a> /

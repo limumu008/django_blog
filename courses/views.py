@@ -1,7 +1,10 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
@@ -16,22 +19,18 @@ class CourseListView(generic.ListView):
     template_name = 'courses/course/list.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        print(self.kwargs)
         subjects = Subject.objects.annotate(total_courses=Count('courses'))
         courses = Course.objects.annotate(total_modules=Count('modules'))
         try:
-            print('try')
             subject_slug = self.kwargs.get('subject_slug')
             subject = get_object_or_404(Subject, slug=subject_slug)
             courses = Course.objects.filter(subject=subject)
         except Exception as e:
-            print(e)
             subject = None
         context = super().get_context_data(**kwargs)
         context['subjects'] = subjects
         context['courses'] = courses
         context['subject'] = subject
-        print(subject, subjects, courses)
         return context
 
 
@@ -48,6 +47,23 @@ class CourseDetailView(generic.DetailView):
     model = Course
     context_object_name = 'course'
     template_name = 'courses/course/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        course = context['course']
+        if user.is_authenticated:
+            is_logined = True
+            if course not in user.courses_joined.all():
+                is_enrolled = False
+            else:
+                is_enrolled = True
+        else:
+            is_logined = False
+            is_enrolled = False
+        context['is_logined'] = is_logined
+        context['is_enrolled'] = is_enrolled
+        return context
 
 
 class CreateCourseView(PermissionRequiredMixin, generic.CreateView):
@@ -174,3 +190,12 @@ def be_teacher(request):
 
 def enroll(request):
     """user enroll course"""
+    user = request.user
+    is_enrolled = json.loads(request.POST.get('is_enrolled'))
+    course_id = json.loads(request.POST.get('course_id'))
+    if not is_enrolled:
+        user.courses_joined.add(course_id)
+    else:
+        user.courses_joined.remove(course_id)
+    is_enrolled = not is_enrolled
+    return JsonResponse({'is_enrolled': is_enrolled})

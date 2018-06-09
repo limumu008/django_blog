@@ -13,6 +13,8 @@ urlpatterns = [
     path('create/', views.CreateCourseView.as_view(), name='course_create'),
     path('update/<int:pk>/', views.UpdateCourseView.as_view(), name='course_update'),
     path('delete/<int:pk>/', views.DeleteCourseView.as_view(), name='course_delete'),
+    # course enroll
+    path('enroll/', views.enroll, name='enroll'),
     # module
     path('<int:pk>/modules/', views.CourseModuleEditView.as_view(),
          name='course_module_update'),

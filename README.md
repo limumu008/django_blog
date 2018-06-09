@@ -60,3 +60,4 @@
     4. template and static
     5. group user
     6. course/module/content:template & view
+    7. 报名

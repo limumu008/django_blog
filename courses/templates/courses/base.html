@@ -26,14 +26,15 @@
                     {% endblock %}
                 </div>
                 <script>
-                    $(document).ready(function () {
-                        {% block domready %}
-                        {% endblock %}
-                    })
+                    {#$(document).ready(function () {#}
+                    {#    {% block domready %}#}
+                    {#    {% endblock %}#}
+                    {#{);#}
                 </script>
             </div>
             <div class="col-md-2"></div>
         </div>
     </div>
-
 {% endblock %}
+
+{% block vue_base %} {% block extra_vue %} {% endblock %} {% endblock %}
