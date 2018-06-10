@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 from django_blog import settings
@@ -68,7 +69,6 @@ class Content(models.Model):
                                related_name='contents')
     content_type = models.ForeignKey(ContentType,
                                      limit_choices_to={'model_in': ('text',
-                                                                    'video',
                                                                     'image',
                                                                     'file')},
                                      on_delete=models.CASCADE)
@@ -94,6 +94,10 @@ class ItemBase(models.Model):
     def __str__(self):
         return self.title
 
+    def render(self):
+        return render_to_string(f'courses/content/{self._meta.model_name}.html',
+                                {'item': self})
+
 
 class Text(ItemBase):
     content = models.TextField()
@@ -107,6 +111,3 @@ class Image(ItemBase):
     image = models.ImageField(upload_to='course_images')
 
 
-class Video(ItemBase):
-    """视频 url，嵌入视频"""
-    url = models.URLField()

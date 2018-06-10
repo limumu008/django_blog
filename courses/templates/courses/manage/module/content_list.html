@@ -14,7 +14,7 @@
             </p>
         </header>
         <div class="contents">
-            <h3>模块</h3>x
+            <h3>模块</h3>
             <ul id="course-modules">
                 {% for m in course.modules.all %}
                     <li data-id="{{ m.id }}" {% if m == module %}class="selected" {% endif %}>
@@ -56,7 +56,6 @@
                 <ul class="content-types">
                     <li><a href="{% url 'course:module_content_create' module.id 'text' %}">文本</a></li>
                     <li><a href="{% url 'course:module_content_create' module.id 'image' %}">图片</a></li>
-                    <li><a href="{% url 'course:module_content_create' module.id 'video' %}">视频</a></li>
                     <li><a href="{% url 'course:module_content_create' module.id 'file' %}">文件</a></li>
                 </ul>
             {% endif %}

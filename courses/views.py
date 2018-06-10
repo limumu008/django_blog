@@ -2,7 +2,7 @@ import json
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -43,6 +43,15 @@ class TeacherCourseListView(generic.ListView):
         return Course.objects.filter(teacher=user)
 
 
+class StudentCourseListView(LoginRequiredMixin, generic.ListView):
+    template_name = 'courses/students/course/list.html'
+    context_object_name = 'student_courses'
+
+    def get_queryset(self):
+        courses = Course.objects.filter(students=self.request.user)
+        return courses
+
+
 class CourseDetailView(generic.DetailView):
     model = Course
     context_object_name = 'course'
@@ -63,6 +72,24 @@ class CourseDetailView(generic.DetailView):
             is_enrolled = False
         context['is_logined'] = is_logined
         context['is_enrolled'] = is_enrolled
+        return context
+
+
+class StudentCourseDetailView(generic.DetailView):
+    """ 实际是 Module 的类图，名字不重要"""
+    model = Module
+    template_name = 'courses/students/course/detail.html'
+    context_object_name = 'module'
+
+    def get_context_data(self, **kwargs):
+        context = {}
+        if self.object:
+            context['object'] = self.object
+            context_object_name = self.get_context_object_name(self.object)
+            if context_object_name:
+                context[context_object_name] = self.object
+        course = self.object.course
+        context['course'] = course
         return context
 
 

@@ -53,7 +53,9 @@
         <p>未支付{{ orders_not_paid.count }}笔订单
             <a href="{% url 'order:orders_not_paid' user.username %}">查看</a>
         </p>
-        <h2>课程管理</h2>
+        <h2>课程管理
+            <small>老师</small>
+        </h2>
         <ul>
             {% if perms.courses.add_course %}
                 <li><a href="{% url 'course:course_create' %}">创建课程</a></li>
@@ -61,6 +63,12 @@
             {% else %}
                 <li><a href="{% url 'course:be_teacher' %}">成为老师</a></li>
             {% endif %}
+        </ul>
+        <h2>课程管理
+            <small>学生</small>
+        </h2>
+        <ul>
+            <li><a href="{% url 'course:student_courses' user.id %}">我的课程</a></li>
         </ul>
     </div>
 

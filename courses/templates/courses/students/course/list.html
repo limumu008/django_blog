@@ -1,0 +1,24 @@
+{% extends 'courses/base.html' %}
+
+{% block title %} 我的课程 {% endblock %}
+
+{% block content %}
+    <h1>我的课程</h1>
+
+    <div class="module">
+        {% for course in object_list %}
+            <div class="course-info">
+                <h3>{{ course.title }}</h3>
+                {% with course.modules.first as first_module %}
+                    <p><a href="{% url 'course:student_course_detail_module' first_module.id %}">进入课程</a></p>
+                {% endwith %}
+            </div>
+        {% empty %}
+            <p>
+                你还没用报名任何课程。
+                <a href="{% url "course:course_list" %}">浏览课程</a>
+            </p>
+        {% endfor %}
+    </div>
+
+{% endblock %}
