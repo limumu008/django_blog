@@ -62,3 +62,4 @@
     6. course/module/content:template & view
     7. 报名
     8. 渲染不同内容
+    9. 缓存系统

@@ -1,10 +1,11 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from . import views
 
 app_name = 'account'
 urlpatterns = [
-    path(r'', views.account_profile, name='profile'),
+    path(r'', cache_page(60 * 15)(views.account_profile), name='profile'),
     path(r'register/', views.RegisterView.as_view(), name='register'),
     path(r'activate/<uidb64>/<token>/', views.ActivateView.as_view(), name='activate'),
     path(r'update/<int:pk>/', views.update_user, name='update_user'),
@@ -14,9 +15,9 @@ urlpatterns = [
     # 头像
     path(r'avatar_change/', views.change, name='change_avatar'),
     # 用户列表/详情
-    path(r'users/', views.UserListView.as_view(), name='user_list'),
+    path(r'users/', cache_page(60 * 15)(views.UserListView.as_view()), name='user_list'),
     path(r'<str:username>/fans/', views.FansListView.as_view(), name='user_fans'),
     path(r'<str:username>/stars/', views.StarListView.as_view(), name='user_stars'),
-    path(r'user/detail/<str:username>/', views.UserDetailView.as_view(), name='user_detail'),
+    path(r'user/detail/<str:username>/', cache_page(60 * 15)(views.UserDetailView.as_view()), name='user_detail'),
     path(r'user/follow/', views.follow_user, name='follow_user'),
 ]
