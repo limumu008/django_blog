@@ -6,7 +6,7 @@ from . import views
 
 app_name = 'blog'
 urlpatterns = [
-    path('', cache_page(60 * 15)(views.IndexView.as_view()), name='index'),
+    path('', cache_page(60)(views.IndexView.as_view()), name='index'),
     path(r'search/', SearchView(template='blog/search.html'), name='search'),
     path(r'archives/<int:year>/<int:month>/',
          views.ArchiveListView.as_view(), name='archives'),
@@ -14,7 +14,7 @@ urlpatterns = [
     path(r'my_articles/<slug:tag_slug>/', views.MyArticles.as_view(), name='my_articles_tags'),
     path(r'my_drafts/', views.MyDrafts.as_view(), name='my_drafts'),
     path(r'my_drafts/<slug:tag_slug>', views.MyDrafts.as_view(), name='my_drafts_tags'),
-    path(r'article/<int:pk>/', cache_page(60 * 15)(views.article_detail), name='articles'),
+    path(r'article/<int:pk>/', cache_page(60)(views.article_detail), name='articles'),
     path(r'share_article/<int:id>/', views.share_article, name='share_article'),
     path(r'tags/<slug:tag_slug>/', views.IndexView.as_view(), name='tag_index'),
     path(r'tags/', views.retrieve_tags, name='tags'),

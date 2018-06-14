@@ -4,19 +4,16 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.db.models import Count
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
 from django.views import generic
-from django.views.decorators.cache import cache_page
 
 from .forms import ModuleFormSet
 from .models import Course, Module, Content, Subject
 from .utils import get_model, get_modelform
 
 
-@method_decorator(cache_page(60 * 10), name='dispatch')
 class CourseListView(generic.ListView):
     model = Course
     template_name = 'courses/course/list.html'
@@ -169,8 +166,10 @@ class CourseModuleEditView(generic.UpdateView):
         context = self.get_context_data()
         formset = context['formset']
         if formset.is_valid():
+            formset.save()
             module = Course.objects.get(pk=self.kwargs.get('pk')).modules.first()
             return redirect(module)
+        return Http404
 
 
 def edit_module_content(request, module_id, model_name, *, id=None):

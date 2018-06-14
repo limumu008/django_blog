@@ -24,7 +24,7 @@
         </ul>
     </div>
     <div class="module">
-        {% cache 300 module_contents module %}
+        {% cache 60 module_contents module %}
             {% for content in module.contents.all %}
                 {% with item=content.target %}
                     <h2>{{ item.title }}</h2>
