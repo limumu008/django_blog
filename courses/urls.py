@@ -6,7 +6,7 @@ from . import views
 app_name = 'course'
 urlpatterns = [
     # course list/detail
-    path('', cache_page(60)(views.CourseListView.as_view()), name='course_list'),
+    path('', cache_page(30)(views.CourseListView.as_view()), name='course_list'),
     path('subject/<slug:subject_slug>/', views.CourseListView.as_view(), name='course_list_subject'),
     # all:only model title & enroll button
     path('detail/<slug:slug>/', views.CourseDetailView.as_view(), name='course_detail'),
