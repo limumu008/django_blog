@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 with open('django_blog/key.txt') as f:
     SECRET_KEY = f.read().strip()
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'qinglanjun.com', '.qinglanjun.com']
 
@@ -78,7 +78,7 @@ DATABASES = {
         'host': 'localhost',
         'TIME_ZONE': 'UTC',
         'OPTIONS': {
-            'read_default_file': '/etc/mysql/my.cnf',
+            'read_default_file': 'C:\ProgramData\MySQL\MySQL Server 5.7\my.ini',
             'isolation_level': 'read committed',
             'init_command': 'SET default_storage_engine=INNODB',
         }
