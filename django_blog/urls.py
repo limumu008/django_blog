@@ -16,6 +16,7 @@ urlpatterns = [
                   path('order/', include('order.urls')),
                   path('coupon/', include('coupons.urls')),
                   path('course/', include('courses.urls')),
+                  path(r'api-auth/', include('rest_framework.urls')),
                   path('admin/', admin.site.urls),
                   path(r'markdownx/', include('markdownx.urls')),
                   path(r'avatar/', include('avatar.urls'), )] + static(settings.STATIC_URL,
