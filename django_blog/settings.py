@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'order.apps.OrderConfig',
     'coupons.apps.CouponsConfig',
     'paypal.standard.ipn',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -162,6 +163,12 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 # SECURE_SSL_REDIRECT = True
+
+# rest_framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+}
 
 # markdown
 MARKDOWNX_MARKDOWN_EXTENSIONS = ['markdown.extensions.extra',

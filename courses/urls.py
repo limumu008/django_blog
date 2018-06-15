@@ -1,10 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from django.views.decorators.cache import cache_page
 
 from . import views
+from .api.urls import course_router
 
 app_name = 'course'
 urlpatterns = [
+    # api
+    path(r'api/', include(course_router.urls)),
     # course list/detail
     path('', cache_page(30)(views.CourseListView.as_view()), name='course_list'),
     path('subject/<slug:subject_slug>/', views.CourseListView.as_view(), name='course_list_subject'),
