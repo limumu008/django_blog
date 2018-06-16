@@ -118,6 +118,7 @@ order/migrations/
 coupons/migrations/
 courses/migrations/
 django_blog/settings.py
+django_blog/key.txt
 
 
 log/
