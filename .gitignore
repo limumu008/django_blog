@@ -117,6 +117,8 @@ cart/migrations/
 order/migrations/
 coupons/migrations/
 courses/migrations/
+django_blog/settings.py
+
 
 log/
 Pipfile

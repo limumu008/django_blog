@@ -5,9 +5,6 @@
 {% block extra_css %}
     <link href="{% static 'css/cover.css' %}" rel="stylesheet">
 {% endblock %}
-{% block header %}{% endblock %}
-
-{# todo 首页的模板 #}
 
 {% block index %} {% endblock %}
 
@@ -18,29 +15,10 @@
 
             <div class="cover-container">
 
-                <div class="masthead clearfix">
-                    <div class="inner">
-                        <h3 class="masthead-brand">Cover</h3>
-                        <nav>
-                            <ul class="nav masthead-nav">
-                                <li class="active"><a href="#">Home</a></li>
-                                <li><a href="#">Features</a></li>
-                                <li><a href="#">Contact</a></li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-
                 <div class="inner cover">
                     <h1 class="cover-heading">网站导航</h1>
                     <p class="lead">
-                        网站介绍——长文本在创建了产品目录之后，下一步我们要创建一个购物车系统，
-                        这个购物车系统可以让用户选中他们想买的商品。购物车允许用户在最终下单之
-                        前选中他们想要的物品并且可以在用户浏览网站时暂时保存它们。购物车存在于
-                        会话中，所以购物车中的物品会在用户访问期间被保存。</p>
-                    <p class="lead">
-                        <a href="#" class="btn btn-lg btn-default">Learn more</a>
-                    </p>
+                        目前完成的三个展示用项目</p>
                     <a href="{% url 'blog:index' %}">
                         <img src="{% static 'img/blog.jpg' %}" class="img-thumbnail thum-pad">
                     </a>
