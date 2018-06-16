@@ -19,6 +19,9 @@
     6. 静态文件
     
             python manage.py collectstatic
+    7. 安装 Redis
+    
+            pip install reids 
 3. 部署
     1. nginx
         1. 安装
