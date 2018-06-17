@@ -1,0 +1,43 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if category %}{{ category.title }}{% else %}Products{% endif %}
+{% endblock %}
+{% block extra_shop_js %}
+    <script src="{% static 'js/jquery.growl.js' %}"></script>
+    <script src="{% static 'js/get_crsftoken.js' %}"></script>
+    <script>
+        const change_cart_url = "{% url 'cart:change_cart' %}";
+        const is_logined = "{{ is_logined }}" === 'True';
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="product-detail">
+        <img src="{% if product.image %}{{ product.image.url }}
+                                        {% else %}{% static "shop/img/no_image.png" %}{% endif %}">
+        <div></div>
+        <h1>{{ product.name }}</h1>
+        <h2><a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a></h2>
+        <p class="price">${{ product.price }}</p>
+        <button class="btn btn-danger" id="to-cart" value="{{ product.id }}">加入购物车</button>
+        {{ product.description|linebreaks }}
+
+        {# 推荐  #}
+        {% if suggest_products %}
+            <div class="recommendations">
+                <h3>买过的人也买过：</h3>
+                {% for p in suggest_products %}
+                    <div class="item">
+                        <a href="{{ p.get_absolute_url }}">
+                            <img src="
+                                    {% if p.image %}{{ p.image.url }}{% else %}{% static 'img/shop.png' %}{% endif %}">
+                        </a>
+                        <p class="text-center"><a href="{{ p.get_absolute_url }}">{{ p.name }}</a></p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

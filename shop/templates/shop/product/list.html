@@ -1,0 +1,44 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %} {% if category %} {{ category.name }} {% else %} 产品列表 {% endif %} {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <nav class="navbar navbar-default navbar-static-top">
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="list-inline nav navbar-nav">
+                            <li {% if not category %}class="active"{% endif %}>
+                                <a href="{% url "shop:product_list" %}">全部</a>
+                            </li>
+                            {% for c in categories %}
+                                <li {% if category.slug == c.slug %}class="selected"{% endif %}>
+                                    <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </nav>
+                <div class="product-list">
+                    <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
+                    {% for product in products %}
+                        <div class="item">
+                            <a href="{{ product.get_absolute_url }}">
+                                <img src="{% if product.image %}{{ product.image.url }}
+                                {% else %}{% static "shop/img/no_image.png" %}{% endif %}">
+                            </a>
+                            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a><br>
+                            ${{ product.price }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+
+
+{% endblock %}

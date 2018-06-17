@@ -1,0 +1,64 @@
+{% extends 'courses/base.html' %}
+{% load course_tags %}
+
+{% block title %} 模块 {{ module.order|add:1 }}:{{ module.title }} {% endblock %}
+
+{% block content %}
+    {% with course=module.course %}
+        <header>
+            <h1>课程 {{ course.title }}</h1>
+            <p class="course-indent">
+                教师: {{ course.teacher.username }} {{ course.created|date:'y/m/d' }}<br>
+            </p>
+            <p class="course-indent">{{ course.overview }}
+            </p>
+        </header>
+        <div class="contents">
+            <h3>模块</h3>
+            <ul id="course-modules">
+                {% for m in course.modules.all %}
+                    <li data-id="{{ m.id }}" {% if m == module %}class="selected" {% endif %}>
+                        <a href="{% url 'course:module_content_list' m.id %}">
+                            模块 {{ m.order|add:1 }}
+                            <br>
+                            {{ m.title }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>无模块内容</li>
+                {% endfor %}
+                <p><a href="{% url 'course:course_module_update' course.pk %}">管理模块信息</a></p>
+            </ul>
+        </div>
+        <div class="module">
+            <h2>模块 {{ module.order|add:1 }}:{{ module.title }}</h2>
+            <h3>模块内容:</h3>
+            <div id="module-contents">
+                {% for content in module.contents.all %}
+                    <div data-id="{{ content.id }}">
+                        {% with  item=content.target %}
+                            <p>{{ item }}({{ item|model_name }})</p>
+                            {% if user == course.teacher %}
+                                <a href="{% url 'course:module_content_update' module.id item|model_name item.id %}">编辑</a>
+                                <form action="{% url 'course:module_content_delete' content.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" value="删除">
+                                </form>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                {% empty %}
+                    <p>模块尚无内容</p>
+                {% endfor %}
+            </div>
+            {% if user == course.teacher %}
+                <h3>添加新内容</h3>
+                <ul class="content-types">
+                    <li><a href="{% url 'course:module_content_create' module.id 'text' %}">文本</a></li>
+                    <li><a href="{% url 'course:module_content_create' module.id 'image' %}">图片</a></li>
+                    <li><a href="{% url 'course:module_content_create' module.id 'file' %}">文件</a></li>
+                </ul>
+            {% endif %}
+        </div>
+    {% endwith %}
+{% endblock %}

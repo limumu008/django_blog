@@ -43,6 +43,7 @@ class User(AbstractUser):
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_author = models.BooleanField(default=False)
+    is_teacher = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} profile"

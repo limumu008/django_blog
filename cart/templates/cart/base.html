@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+    <link href="{% static 'shop/css/shop.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block header_left %}
+    <li><a href="{% url 'shop:product_list' %}">商城</a></li>
+{% endblock %}
+
+{% block vue_base %} {% block extra_vue %} {% endblock %} {% endblock %}

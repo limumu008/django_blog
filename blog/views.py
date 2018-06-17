@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import JsonResponse, Http404
@@ -13,6 +12,7 @@ from django.shortcuts import (
 )
 from django.views import generic
 from django.views.decorators.http import require_POST
+from django.views.generic import ListView
 from taggit.models import Tag
 
 from actions.utils import create_action
@@ -20,6 +20,7 @@ from blog.search_indexes import ArticleIndex
 from blog.utils import toggle_pages, create_like
 from .forms import (ArticleCommentForm, ArticleForm, EmailArticleForm, ReplyForm)
 from .models import Article, Reply, Comment
+from .tasks import article_shared
 
 
 class IndexView(generic.ListView):
@@ -41,6 +42,9 @@ class IndexView(generic.ListView):
         context = super().get_context_data(**kwargs)
         page_toggle = toggle_pages(context['articles'])
         context['page_toggle'] = page_toggle
+        # 归档月
+        dates = Article.published.dates('publish', 'month', order='DESC')
+        context['dates'] = dates
         try:
             context['tag'] = self.tag
             return context
@@ -84,24 +88,19 @@ class MyDrafts(LoginRequiredMixin, IndexView):
                 filter(status='draft')
 
 
-def archives(request):
-    """文章归档"""
-    archives = []
-    dates = Article.published.dates('publish', 'month', order='DESC')
-    for date in dates:
-        year = date.year
-        month = date.month
+class ArchiveListView(ListView):
+    context_object_name = 'articles'
+    template_name = 'blog/archives.html'
+    paginate_by = 10
 
-        if month < 10:
-            month_str = str(year) + '-0' + str(month)
+    def get_queryset(self):
+        if self.kwargs['month'] < 10:
+            month_str = str(self.kwargs['year']) + '-0' + str(self.kwargs['month'])
         else:
-            month_str = str(year) + '-' + str(month)
+            month_str = str(self.kwargs['year']) + '-' + str(self.kwargs['month'])
         articles = Article.published.filter(
-            publish__startswith=month_str).order_by('-publish')
-        archives.append(articles)
-    date_archives = zip(dates, archives)
-    context = {'date_archives': date_archives}
-    return render(request, 'blog/article_archives.html', context)
+            publish__startswith=month_str)
+        return articles
 
 
 class NewArticle(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
@@ -144,9 +143,9 @@ def article_detail(request, pk):
     article = get_object_or_404(Article, id=pk)
     # 用户是否登录的变量，用于 js
     if request.user.is_authenticated:
-        user_logined = 'yes'
+        user_logined = True
     else:
-        user_logined = 'no'
+        user_logined = False
     # 检索相似
     article_id_list = article.tags.values_list('id', flat=True)
     similar_articles = Article.published.filter(
@@ -210,10 +209,7 @@ def share_article(request, id):
         if form.is_valid():
             cd = form.cleaned_data
             article_url = request.build_absolute_uri(article.get_absolute_url())
-            subject = f"{cd['name']} 建议你读一下《{article.title}》"
-            message = f"{article_url} " \
-                      f"{cd['name']}的评论：{cd['comment']}"
-            send_mail(subject, message, 'wangzhou8284@163.com', [cd['to']])
+            article_shared.delay(url=article_url, cd=cd, article_id=article.id)
             create_action(request.user, article,
                           verb=f"{request.user.username} 分享了文章《{article.title}》")
             messages.success(request, '分享成功')
@@ -254,7 +250,7 @@ def user_like(request):
         # 用户点/取消赞
     like = create_like(request.user, target)
     is_liked = like.is_liked
-    return JsonResponse({'status': is_liked})
+    return JsonResponse({'is_liked': is_liked})
 
 
 @require_POST

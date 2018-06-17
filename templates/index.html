@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}首页{% endblock %}
+
+{% block extra_css %}
+    <link href="{% static 'css/cover.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block index %} {% endblock %}
+
+{% block section %}
+    <div class="site-wrapper">
+
+        <div class="site-wrapper-inner">
+
+            <div class="cover-container">
+
+                <div class="inner cover">
+                    <h1 class="cover-heading">网站导航</h1>
+                    <p class="lead">
+                        目前完成的三个展示用项目</p>
+                    <a href="{% url 'blog:index' %}">
+                        <img src="{% static 'img/blog.jpg' %}" class="img-thumbnail thum-pad">
+                    </a>
+                    <a href="{% url 'shop:product_list' %}">
+                        <img src="{% static 'img/shop.png' %}" class="img-thumbnail thum-pad">
+                    </a>
+                    <a href="{% url 'course:course_list' %}">
+                        <img src="{% static 'img/learn.png' %}" class="img-thumbnail thum-pad">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "courses/base.html" %}
+
+{% load static %}
+
+{% block title %} {{ course.title }} {% endblock %}
+
+{% block extra_js %}
+    <script>
+        let is_logined ={{ is_logined|yesno:'true,false,maybe' }};
+        let is_enrolled ={{ is_enrolled|yesno:'true,false,maybe' }};
+        const login_url = "{% url 'login' %}";
+        const enroll_url = "{% url 'course:enroll' %}";
+        let course_id = "{{ course.id }}";
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% with subject=course.subject %}
+        <h1>
+            {{ course.title }}
+        </h1>
+        <div class="module">
+            <h2>概述</h2>
+            <p>
+                <a href="{% url "course:course_list_subject" subject.slug %}">{{ subject.title }}</a>.
+                老师: {{ course.teacher.username }}
+            </p>
+            <button v-on:click="enroll" class="btn btn-primary" id="enroll_button">
+                [[text]]
+            </button>
+            {{ course.overview|linebreaks }}
+            <ol>
+                {% for m in course.modules.all %}
+                    <li>{{ m.title }}</li>
+                {% endfor %}
+            </ol>
+            <p>提示：首次报名后进入个人中心：我的课程查看课程内容。</p>
+        </div>
+    {% endwith %}
+{% endblock %}
+
+{% block extra_vue %}
+    <script src="{% static 'js/get_crsftoken.js' %}"></script>
+    <script src="{% static 'courses/js/enroll.js' %}"></script>
+{% endblock %}

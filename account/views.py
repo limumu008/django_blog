@@ -14,7 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
@@ -44,6 +44,9 @@ def account_profile(request):
     user = request.user
     # 用户关注的人
     stars = user.star0.all()
+    # 订单
+    orders_paid = user.orders.filter(is_paid=True)
+    orders_not_paid = user.orders.filter(is_paid=False)
     # star 动作流
     action_list = Action.objects.filter(user__in=stars)[:50].select_related('user')
     # 分页开关
@@ -56,7 +59,8 @@ def account_profile(request):
         'user': user,
         'page_toggle': page_toggle,
         'actions': actions,
-
+        'orders_paid': orders_paid,
+        'orders_not_paid': orders_not_paid,
     }
     return render(request, 'account/profile.html', context)
 
@@ -281,6 +285,7 @@ class UserDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         user = context['user']
         context['articles'] = Article.published.filter(author=user).order_by('-created')
+        # 分页
         action_list = Action.objects.filter(user=user)[:50].select_related('user')
         page_toggle = toggle_pages(action_list)
         context['page_toggle'] = page_toggle
@@ -289,38 +294,41 @@ class UserDetailView(generic.DetailView):
         context['actions'] = paginator.get_page(page)
         # 用户是否登录的变量，用于 js
         if self.request.user.is_authenticated:
-            user_logined = 'yes'
+            user_logined = True
         else:
-            user_logined = 'no'
-        context['user_logined'] = user_logined
+            user_logined = False
+        context['login_status'] = user_logined
+        # 用户是否关注指定用户
+        if self.request.user in user.fan0.all():
+            is_follow = True
+        else:
+            is_follow = False
+        context['is_follow'] = is_follow
         return context
 
 
 def follow_user(request):
     """（取消）关注用户"""
     user_id = int(request.POST.get('user_id'))
-    action = str(request.POST.get('action'))
+    follow_status = True if request.POST.get('follow_status') == 'true' else False
     fan = request.user
     star = get_object_or_404(User, id=user_id)
-    if request.user.is_anonymous:
-        return JsonResponse({'action': 'redirect',
-                             'url': reverse('login')})
-    else:
-        if star.id == fan.id:
-            return JsonResponse({'action': 'self'})
-        if user_id and action:
-            try:
-                if action == '关注':
-                    Contact.objects.create(fans=fan,
-                                           star=star)
-                    create_action(fan, star, f"{fan.username} 关注了 {star.username}")
-                    json = {'action': '取消关注'}
-                else:
-                    Contact.objects.filter(fans=fan,
-                                           star=star).delete()
-                    create_action(fan, star, f"{fan.username} 取消了关注 {star.username}")
-                    json = {'action': '关注'}
-                return JsonResponse(json)
-            except User.DoesNotExist:
-                return JsonResponse({})
+    # if user follow self
+    if star.id == fan.id:
+        return JsonResponse({'action': 'self'})
+    try:
+        # user is unfollow:follow others
+        if not follow_status:
+            Contact.objects.create(fans=fan,
+                                   star=star)
+            create_action(fan, star, f"{fan.username} 关注了 {star.username}")
+            json = {'action': 'followed'}
+        # user is followed:unfollow
+        else:
+            Contact.objects.filter(fans=fan,
+                                   star=star).delete()
+            create_action(fan, star, f"{fan.username} 取消了关注 {star.username}")
+            json = {'action': 'unfollow'}
+        return JsonResponse(json)
+    except User.DoesNotExist:
         return JsonResponse({})

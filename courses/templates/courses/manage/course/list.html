@@ -1,0 +1,20 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}courses{% endblock %}
+
+{% block content %}
+    <div class="module">
+        {% for course in courses %}
+            <div class="course-info">
+                {% with  first_module=course.modules.first %}
+                    <h3><a href="{{ first_module.get_absolute_url }}">{{ course.title }}</a></h3>
+                {% endwith %}
+                <p class="extra_info">
+                    {{ course.teacher }} {{ course.created|date:'y/m/d' }}<br>
+                    <a href="{% url 'course:course_update' course.pk %}">更新课程信息</a>
+                    <a href="{% url 'course:course_delete' course.pk %}">删除课程</a>
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

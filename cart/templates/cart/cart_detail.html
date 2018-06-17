@@ -1,0 +1,130 @@
+{% extends 'cart/base.html' %}
+{% load static thumbnail %}
+{% block title %}购物车{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/get_crsftoken.js' %}"></script>
+    <script>
+        const change_cart_url = "{% url 'cart:change_cart' %}";
+    </script>
+{% endblock %}
+
+{% block section %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1"></div>
+            {% if cart|length == 0 %}
+                <div class="col-md-10">
+                    <p>空空如也，<a href="{% url "shop:product_list" %}">去购物吧~</a></p>
+                </div>
+            {% else %}
+                <div class="col-md-10">
+                    <h1>购物车</h1>
+                    <p>小提示：点击图片返回商品详情页</p>
+                    <table class="cart">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>商品</th>
+                            <th>数量</th>
+                            <th>删除</th>
+                            <th>单价</th>
+                            <th>小计</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in cart %}
+                            {% with product=item.product %}
+                                <tr id="tr-{{ product.id }}">
+                                    <td>
+                                        <a href="{{ product.get_absolute_url }}">
+                                            {% if product.image %}
+                                                <img src="{{ product.image|thumbnail_url:'product_in_cart' }}">
+                                            {% else %}
+                                                <img src="{% static "shop/img/no_image.png" %}">
+                                            {% endif %}
+                                        </a>
+                                    </td>
+                                    <td>{{ product.name }}</td>
+                                    <td>
+                                        <form action="{% url 'cart:change_cart' %}" method="post">
+                                            <input type="number" value="{{ item.quantity }}"
+                                                   min="1" max="99" name="quantity">
+                                            <input type="hidden" value="{{ product.id }}" name="product_id">
+                                            {% csrf_token %}
+                                            <input type="submit" class="btn btn-danger" value="修改">
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger remove-btn" value="{{ product.id }}"
+                                                v-on:click="rm_product">
+                                            移除
+                                        </button>
+                                    </td>
+                                    <td class="num">${{ item.price }}</td>
+                                    <td class="num">${{ item.total_price }}</td>
+                                </tr>
+                            {% endwith %}
+                        {% endfor %}
+                        {% if cart.coupon %}
+                            <tr class="subtotal">
+                                <td>合计</td>
+                                <td colspan="4"></td>
+                                <td class="num">$[[total_price]]</td>
+                            </tr>
+                            <tr>
+                                <td>优惠劵：{{ cart.coupon.code }}(折扣{{ cart.coupon.discount }}%)</td>
+                                <td colspan="4"></td>
+                                <td class="num neg">-$[[discount]]</td>
+                            </tr>
+                        {% endif %}
+                        <tr class="total">
+                            <td>合计{% if cart.coupon %}(优惠){% endif %}</td>
+                            <td colspan="4"></td>
+                            <td class="num">$<span id="total-price">[[total_price_after_discount]]</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {% if not cart.coupon %}
+                        <form action="{% url 'coupon:apply_coupon' %}" method="post" class="form-inline text-right">
+                            {{ coupon_form.code }}
+                            {% csrf_token %}
+                            <input type="submit" class="form-control" value="使用优惠劵">
+                        </form>
+                    {% endif %}
+                    <p class="text-right else-down">
+                        <a href="{% url "shop:product_list" %}" class="button light">继续购物</a>
+                        <a href="{% url 'order:create_order' %}" class="button btn btn-danger">结算</a>
+                    </p>
+
+                    {# 推荐  #}
+                    {% if suggest_products %}
+                        <div class="recommendations cart">
+                            <h3>买过的人也买过：</h3>
+                            {% for p in suggest_products %}
+                                <div class="item">
+                                    <a href="{{ p.get_absolute_url }}">
+                                        <img src="
+                                    {% if p.image %}{{ p.image.url }}{% else %}{% static 'img/shop.png' %}{% endif %}">
+                                    </a>
+                                    <p class="text-center"><a href="{{ p.get_absolute_url }}">{{ p.name }}</a></p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_vue %}
+    <script>
+        let total_price ={{ cart.get_total_price|safe }};
+        let discount ={{ cart.get_discount|safe }};
+        let total_price_after_discount ={{ cart.get_total_price_after_discount|safe }};
+    </script>
+    <script src="{% static 'cart/js/rm_product.js' %}"></script>
+{% endblock %}

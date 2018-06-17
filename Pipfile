@@ -1,0 +1,41 @@
+[[source]]
+
+url="http://mirrors.aliyun.com/pypi/simple"
+verify_ssl=false
+name="aliyun"
+
+
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+django = "*"
+markdown = "*"
+setuptools = "*"
+django-taggit = "*"
+django-markdownx = "*"
+pillow = "*"
+wheel = "*"
+gunicorn = "*"
+pygments = "*"
+django-haystack = "*"
+whoosh = "*"
+easy-thumbnails = "*"
+celery = "*"
+redis = "*"
+django-paypal = "*"
+djangorestframework = "*"
+
+
+[dev-packages]
+
+
+
+[requires]
+
+python_version = "3.6"

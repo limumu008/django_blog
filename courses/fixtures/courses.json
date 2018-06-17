@@ -1,0 +1,138 @@
+[
+{
+  "model": "courses.subject",
+  "pk": 7,
+  "fields": {
+    "title": "python",
+    "slug": "python"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 8,
+  "fields": {
+    "title": "django",
+    "slug": "django"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 9,
+  "fields": {
+    "title": "javascript",
+    "slug": "javascript"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 9,
+  "fields": {
+    "teacher": 1,
+    "subject": 9,
+    "title": "js essence",
+    "slug": "js-essence",
+    "overview": "say the essence of js a",
+    "created": "2018-06-08T05:57:43.515Z",
+    "students": [
+      1
+    ]
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 10,
+  "fields": {
+    "teacher": 1,
+    "subject": 8,
+    "title": "turorial",
+    "slug": "tutorial",
+    "overview": "wu",
+    "created": "2018-06-10T14:12:39.806Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 9,
+  "fields": {
+    "course": 9,
+    "title": "\u4ecb\u7ecda",
+    "description": "\u7b80\u5355\u4ecb\u7ecd\u8bfe\u7a0b\u7684\u6307\u793a\u70b9",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 10,
+  "fields": {
+    "course": 9,
+    "title": "\u6838\u5fc3",
+    "description": "\u91cd\u8981\u7684\u77e5\u8bc6\u70b9",
+    "order": 1
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 11,
+  "fields": {
+    "course": 10,
+    "title": "",
+    "description": "",
+    "order": 0
+  }
+},
+{
+  "model": "courses.content",
+  "pk": 4,
+  "fields": {
+    "module": 9,
+    "content_type": 32,
+    "object_id": 3,
+    "order": 0
+  }
+},
+{
+  "model": "courses.text",
+  "pk": 3,
+  "fields": {
+    "owner": 1,
+    "title": "\u6587\u672c\u4ecb\u7ecd",
+    "created": "2018-06-08T06:08:38.934Z",
+    "updated": "2018-06-08T23:54:48.992Z",
+    "content": "\u8fd9\u91cc\u5c31\u662f\u5df4\u5df4\u62c9\u62c9\u600e\u4e48\u529e\u5462\uff1f"
+  }
+},
+{
+  "model": "courses.text",
+  "pk": 4,
+  "fields": {
+    "owner": 1,
+    "title": "text",
+    "created": "2018-06-10T13:43:57.034Z",
+    "updated": "2018-06-10T13:43:57.034Z",
+    "content": "none"
+  }
+},
+{
+  "model": "courses.file",
+  "pk": 1,
+  "fields": {
+    "owner": 1,
+    "title": "file",
+    "created": "2018-06-10T13:51:55.683Z",
+    "updated": "2018-06-10T13:51:55.683Z",
+    "file": "course_files/cat.jpg"
+  }
+},
+{
+  "model": "courses.image",
+  "pk": 2,
+  "fields": {
+    "owner": 1,
+    "title": "image",
+    "created": "2018-06-10T13:44:07.729Z",
+    "updated": "2018-06-10T13:44:07.729Z",
+    "image": "course_images/cat_thc2rQj.jpg"
+  }
+}
+]

@@ -108,7 +108,18 @@ staticfiles/
 
 # else
 media/
+whoosh_index/
 account/migrations/
 blog/migrations/
 actions/migrations/
+shop/migrations/
+cart/migrations/
+order/migrations/
+coupons/migrations/
+courses/migrations/
+django_blog/settings.py
+django_blog/key.txt
+
+
+log/
 Pipfile

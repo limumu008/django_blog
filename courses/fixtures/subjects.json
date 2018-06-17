@@ -1,0 +1,34 @@
+[
+{
+  "model": "courses.subject",
+  "pk": 3,
+  "fields": {
+    "title": "python",
+    "slug": "python"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 4,
+  "fields": {
+    "title": "django",
+    "slug": "django"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 5,
+  "fields": {
+    "title": "vue.js",
+    "slug": "vuejs"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 6,
+  "fields": {
+    "title": "javascript",
+    "slug": "javascript"
+  }
+}
+]

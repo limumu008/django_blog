@@ -9,7 +9,7 @@ with open('django_blog/key.txt') as f:
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', 'qinglanjun.com', '.qinglanjun.com']
+ALLOWED_HOSTS = ['localhost', '.qinglanjun.com']
 
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
@@ -23,11 +23,19 @@ INSTALLED_APPS = [
     'haystack',
     'django.forms',
     'blog.apps.BlogConfig',
+    'courses.apps.CoursesConfig',
     'taggit',
     'markdownx',
     'gunicorn',
     'avatar',
+    'easy_thumbnails',
     'actions.apps.ActionsConfig',
+    'shop.apps.ShopConfig',
+    'cart.apps.CartConfig',
+    'order.apps.OrderConfig',
+    'coupons.apps.CouponsConfig',
+    'paypal.standard.ipn',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +62,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'cart.context_processors.cart',
             ],
+            'string_if_invalid': '!!! Here is a invalid variable !!!',
         },
     },
 ]
@@ -67,7 +77,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'host': 'localhost',
-        'TIME_ZONE': 'Asia/Shanghai',
+        'TIME_ZONE': 'UTC',
         'OPTIONS': {
             'read_default_file': '/etc/mysql/my.cnf',
             'isolation_level': 'read committed',
@@ -125,6 +135,14 @@ ABSOLUTE_URL_OVERRIDES = {
                                            kwargs={'username': u.username})
 }
 
+# cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    }
+}
+
 # email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_SUBJECT_PREFIX = '[Django] '
@@ -146,6 +164,12 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 # SECURE_SSL_REDIRECT = True
 
+# rest_framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+}
+
 # markdown
 MARKDOWNX_MARKDOWN_EXTENSIONS = ['markdown.extensions.extra',
                                  'markdown.extensions.codehilite',
@@ -161,61 +185,25 @@ HAYSTACK_CONNECTIONS = {
 # 每页结果
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'log/django.log',
-        },
-        'request': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'log/request.log',
-        },
-        'server': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'log/server.log',
-        },
-        'template': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'log/template.log',
-        },
-        'debuglog': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'log/debuglog.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ['request'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'django.server': {
-            'handlers': ['server'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'django.template': {
-            'handlers': ['template'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'debuglog': {
-            'handlers': ['debuglog'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
+# session
+CART_SESSION_ID = 'cart'
+
+# thumbnail
+THUMBNAIL_ALIASES = {
+    '': {
+        'product_in_cart': {'size': (120, 84), 'crop': True},
     },
 }
+
+# paypal
+PAYPAL_TEST = False
+PAYPAL_RECEIVER_EMAIL = 'wangzhou8284@gmail.com'
+
+# redis
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 2
+
+# celery
+CELERY_BROKER_URL = 'redis://@localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://@localhost:6379/1'

@@ -1,0 +1,39 @@
+html {
+    height: 100%;
+    width: 100%;
+    clip: auto;
+    overflow: hidden;
+    position: absolute;
+}
+
+body {
+    height: 100%;
+    background-color: #333;
+}
+
+nav {
+    background-color: #333;
+}
+
+body {
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+}
+
+.site-wrapper {
+    display: table;
+    width: 100%;
+    min-height: 100%;
+}
+
+.cover-container {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.thum-pad {
+    margin: 0 15px;
+}
+
+

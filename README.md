@@ -1,46 +1,58 @@
-1. 准备
-    1. 配置初始开发环境
-    2. 配置 settings.py 文件
-    3. 替换默认 User 模型
-    4. 创建网站布局
-2. 博客结构
-    1. startapp blog
-    2. model:article
-    3. admin:添加 article
-    4. views:添加索引视图
-    5. map url
-    6. 构建模板及 css
-    7. 整理
-3. 添加功能
-    1. 页码
-    2. 邮件分享文章
-    3. 用户功能
-    4. 使用邮件激活账号
-    5. 单级评论
-    6. 文章标签,提示消息
-    7. 账号激活后自动登录
-    8. 添加我的文章索引，添加更新文章
-    9. markdown 编辑器(一些文件可能未被 git)
-    10. 归档
-    11. 草稿
-    12. 统计字数、评论数、阅读数
-4. 部署
-    1. 安全设置
-    2. 部署准备
-    3. 添加日志
-    4. 修复
-5. 优化
-    1. 添加用户信息
-    2. 头像
-    3. 添加功能：粉丝与关注的人
-    4. 文章推荐
-    5. 添加动作流
-    6. fix
-        1. 关注重定向到登录页
-        2. 评论重定向到登录页
-    7. 添加对文章点赞功能
-    8. 添加回复评论功能
-    9. 添加多级回复功能
-    10. 添加 haystack 搜索引擎
+1. 概述
+    1. 包括博客、商城 demo、以及在线学习平台三个展示用项目。
+    2. 主要使用 django、部分 django 第三方插件开发，使用 jquery 完成 ajax。
+2. 准备
+    1. 安装 pipenv
+
+            pip install pipenv
+    2. ```git clone git@github.com:StevenLianaL/django_blog.git```
+    3. 创建虚拟环境并安装依赖：
+
+           pipenv install
+    4. 配置 settings.py
+        1.配置数据库：简单起见，可修改为默认的 SQLite。
+        2.配置邮箱：将邮箱改为自己的邮箱即可。
+    5. migrate
     
+            python manage.py makemigrations
+            python manage.py migrate
+    6. 静态文件
+    
+            python manage.py collectstatic
+    7. 安装 Redis
+    
+            pip install reids 
+3. 部署
+    1. nginx
+        1. 安装
+            
+                sudo apt-get install nginx
+        2. 配置(/etc/nginx/sites-available/your-conf-name)
+
+                server {
+                    listen:80;
+                    
+                    server_name:your domain;
+                    location / static {
+                        alias /home/steven/sites/django.qinglanjun.com/django_blog/staticfiles; # your Django project's static files
+                        
+                    location /media {
+                        alias /home/steven/sites/django.qinglanjun.com/django_blog/media;
+                        
+                    location / {
+                        proxy_set_header Host $host;
+                        proxy_pass http://unix:/tmp/www.qinglanjun.com.socket;
+                }
+        3. 创建链接
+            
+                sudo ln -s /etc/nginx/sites-available/your-conf-name /etc/nginx/sites-enabled/your-conf-name
+        4. 启动
+            
+                sudo service nginx start
+    2. gunicorn
+        
+            gunicorn --bind unix:/tmp/www.qinglanjun.com.socket django_blog.wsgi:application&
+    3. celery
+        
+            celery -A django_blog worker  -l info
         

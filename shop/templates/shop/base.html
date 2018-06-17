@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static avatar_tags %}
+
+{% block extra_css %}
+    <link href="{% static 'css/jquery.growl.css' %}" rel="stylesheet">
+    <link href="{% static 'shop/css/shop.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        const login_url = "{% url 'login' %}";
+    </script>
+    <script src="{% static 'shop/js/add_to_cart.js' %}"></script>
+    {% block extra_shop_js %} {% endblock %}
+{% endblock %}
+
+{% block header_left %}
+    <li><a href="{% url 'shop:product_list' %}">商城</a></li>
+{% endblock %}
+
+{% block header_right %}
+    <li>
+        <form class="navbar-form" method="get" action="{% url 'shop:search_product' %}">
+            <input type="search" class="form-control" name="q" id="search_btn">
+            <label for="search_btn"></label>
+            <input type="submit" class="btn btn-default btn-sm" value="搜索">
+        </form>
+    </li>
+    <li>
+        {% if user.is_authenticated %}
+            <a href="{% url 'cart:cart_detail' %}">
+                购物车：<span id="cart-product-count">{{ cart|length }}</span>
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}">
+                购物车：0
+            </a>
+        {% endif %}
+    </li>
+{% endblock %}
+
+
+{% block section %}
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}

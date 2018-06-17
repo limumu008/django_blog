@@ -7,12 +7,13 @@
 {% block extra_js %}
     <script src="{% static 'js/get_crsftoken.js' %}"></script>
     <script>
-        let follow_url = "{% url 'account:follow_user' %}";
+        const follow_url = "{% url 'account:follow_user' %}";
         let user_id = "{{ user.id }}";
-        let login_url = "{% url 'login' %}";
-        let login_status = "{{ user_logined }}";
+        const login_url = "{% url 'login' %}";
+        let login_status = "{{ login_status }}" === "True";
+        let is_follow = "{{ is_follow }}" === 'True';
+        let fans_quantity = parseInt("{% user_fans user %}");
     </script>
-    <script src="{% static 'account/js/follow.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -22,15 +23,10 @@
             {% avatar user 180 class='circle_avatar float' %}
         </div>
         <span class="count">
-            粉丝数：<span id="total_fans">{% user_fans user %}</span>
+            粉丝数：<span id="total_fans">[[fans_quantity]]</span>
         </span>
-        <button class="btn btn-primary" id="follow_button"
-                value="{% if request.user in user.fan0.all %}取消{% endif %}关注">
-            {% if request.user not in user.fan0.all %}
-                关注
-            {% else %}
-                取消关注
-            {% endif %}
+        <button v-on:click="follow" id="follow_button" class="btn btn-primary">
+            [[text]]
         </button>
     </div>
     <div class="col-md-6">
@@ -54,4 +50,8 @@
             {% include 'paginator.html' with page=actions %}
         {% endif %}
     </div>
+{% endblock %}
+
+{% block extra_vue %}
+    <script src="{% static 'account/js/follow.js' %}"></script>
 {% endblock %}

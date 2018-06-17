@@ -1,17 +1,18 @@
 {% extends 'blog/base.html' %}
-{% load static blog_tags avatar_tags static %}
+{% load static blog_tags avatar_tags %}
 
 {% block title %}{{ article.title }}{% endblock %}
 {% block extra_js %}
     <script src="{% static 'js/get_crsftoken.js' %}"></script>
     <script>
-        let like_url = "{% url 'blog:user_like' %}";
-        let reply_url = "{% url 'blog:reply' %}";
-        let login_url = "{% url 'login' %}";
-        let article_id = "{{ article.id }}";
-        let login_status = "{{ user_logined }}";
+        const like_url = "{% url 'blog:user_like' %}";
+        const reply_url = "{% url 'blog:reply' %}";
+        const login_url = "{% url 'login' %}";
+        const article_id = "{{ article.id }}";
+        let login_status = "{{ user_logined }}" === 'True';
+        let is_liked = "{{ article|is_liked:request.user }}" === 'True';
+        let article_likes = parseInt("{% count_likes article %}");
     </script>
-    <script src="{% static 'blog/js/likes.js' %}"></script>
     <script src="{% static 'blog/js/reply.js' %}"></script>
     <script src="{% static 'blog/js/toggle_reply.js' %}"></script>
 {% endblock %}
@@ -20,49 +21,40 @@
     <article>
         {# 显示文章 #}
         <h1>{{ article.title }}</h1>
-        <p class="extra_info">
-            <a href="{% url 'account:user_detail' article.author %}">
-                {% avatar article.author 25 class="circle_avatar" %}
-            </a>
-            <a href="{% url 'account:user_detail' article.author %}">
-                {{ article.author }}
-            </a>
-            {{ article.publish|date:"y/m/d" }}
-            <span class="glyphicon glyphicon-comment dis" aria-hidden="true">{% comments_counts article %} </span>
-            <span class="glyphicon glyphicon-eye-open dis" aria-hidden="true">{{ article.read_times }} </span>
-            <span class="glyphicon glyphicon-thumbs-up dis" aria-hidden="true"><span
-                    id="article_like_count">{% count_likes article %}</span></span>
-            <span class="glyphicon glyphicon-pencil dis" aria-hidden="true">{{ article.content|length }}</span>
-        </p>
-        {% if article_author %}
-            <p>
-                <a href="{% url 'blog:update_article' article.id %}">修改文章</a>
-            </p>
-        {% endif %}
-        <p>
-            {% for tag in article.tags.all %}
-                <a href="{% url 'blog:tag_index' tag.slug %}">
-                    <span class="tags">{{ tag.name }}</span>
+        <div id="like-article">
+            <p class="extra_info">
+                <a href="{% url 'account:user_detail' article.author %}">
+                    {% avatar article.author 25 class="circle_avatar" %}
                 </a>
-                {% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </p>
-        <p>{{ article.content|markdown_format }}</p>
-
-        {# 分享文章 点赞 #}
-        <div>
+                <a href="{% url 'account:user_detail' article.author %}">
+                    {{ article.author }}
+                </a>
+                {{ article.publish|date:"y/m/d" }}
+                <span class="glyphicon glyphicon-comment dis" aria-hidden="true">{% comments_counts article %} </span>
+                <span class="glyphicon glyphicon-eye-open dis" aria-hidden="true">{{ article.read_times }} </span>
+                <span class="glyphicon glyphicon-thumbs-up dis" aria-hidden="true"><span
+                        id="article_like_count">[[article_likes]]</span></span>
+                <span class="glyphicon glyphicon-pencil dis" aria-hidden="true">{{ article.content|length }}</span>
+            </p>
+            {% if article_author %}
+                <p>
+                    <a href="{% url 'blog:update_article' article.id %}">修改文章</a>
+                </p>
+            {% endif %}
+            <p>
+                {% for tag in article.tags.all %}
+                    <a href="{% url 'blog:tag_index' tag.slug %}">
+                        <span class="tags">{{ tag.name }}</span>
+                    </a>
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p>{{ article.content|markdown_format }}</p>
+            {# 分享文章 点赞 #}
             <a href="{% url 'blog:share_article' id=article.id %}">分享文章</a>
             {# 点赞 #}
-            <button {% if article|is_liked:request.user %}
-                class="btn btn-default right_btn already_like"
-            {% else %}
-                class="btn btn-default right_btn"
-            {% endif %}
-                id="like_article_btn" value="{{ article.id }}">
-                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-            </button>
+            <like-btn class="right_btn" :class="{already_like:is_liked}" v-on:like="like"></like-btn>
         </div>
-
         {# 新评论 #}
         <h2>创建新评论：</h2>
         <form action="." method="post" id="new_comment">
@@ -100,6 +92,7 @@
                         <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"><span
                                 id="like_comment_count_{{ comment.id }}">{% count_likes comment %}</span></span>
                     </button>
+                    <like-btn class="btn-xs like_comment_btn"></like-btn>
 
                 </div>
                 {% with replies=comment.replies.all %}
@@ -176,5 +169,8 @@
             </li>
         {% endfor %}
     </ul>
+{% endblock %}
+{% block extra_vue %}
+    <script src="{% static 'blog/js/like.js' %}"></script>
 {% endblock %}
 

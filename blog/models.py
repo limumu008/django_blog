@@ -74,6 +74,7 @@ class Reply(models.Model):
 
     class Meta:
         ordering = ('created',)
+        verbose_name_plural = 'replies'
 
     def __str__(self):
         return self.content
@@ -90,6 +91,9 @@ class Likes(models.Model):
                                      on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     likes_target = GenericForeignKey()
+
+    class Meta:
+        verbose_name_plural = 'likes'
 
     def __str__(self):
         return f"{self.user.username}赞了{self.likes_target}"

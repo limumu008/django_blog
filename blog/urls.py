@@ -1,11 +1,15 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
+from haystack.views import SearchView
 
 from . import views
 
 app_name = 'blog'
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
-    path(r'archives/', views.archives, name='archives'),
+    path('', cache_page(60)(views.IndexView.as_view()), name='index'),
+    path(r'search/', SearchView(template='blog/search.html'), name='search'),
+    path(r'archives/<int:year>/<int:month>/',
+         views.ArchiveListView.as_view(), name='archives'),
     path(r'my_articles/', views.MyArticles.as_view(), name='my_articles'),
     path(r'my_articles/<slug:tag_slug>/', views.MyArticles.as_view(), name='my_articles_tags'),
     path(r'my_drafts/', views.MyDrafts.as_view(), name='my_drafts'),

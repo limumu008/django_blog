@@ -1,0 +1,24 @@
+{% extends 'order/base.html' %}
+
+{% block title %} 订单详情 {% endblock %}
+
+{% block main %}
+    {% for order in orders %}
+        <h3>订单：{{ order.id }}
+            <span
+                    class="small">{{ order.created|date:'y/m/d h:i' }}     总价：{{ order.get_total_price }}
+            </span>
+            {% if not order.is_paid %}
+                <span class="small"><a href="{% url 'order:payment_process_0' order.id %}">去支付</a></span>
+            {% endif %}
+        </h3>
+        <ul>
+            {% for item in order.items.all %}
+                <li>
+                    <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a>
+                    单价：{{ item.price }} 数量：{{ item.quantity }} 合计：{{ item.get_cost }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% endblock %}
