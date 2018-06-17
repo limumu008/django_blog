@@ -9,7 +9,7 @@ with open('django_blog/key.txt') as f:
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', 'qinglanjun.com', '.qinglanjun.com']
+ALLOWED_HOSTS = ['localhost', '.qinglanjun.com']
 
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
